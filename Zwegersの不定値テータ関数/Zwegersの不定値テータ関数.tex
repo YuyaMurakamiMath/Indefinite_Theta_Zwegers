@@ -1,0 +1,1973 @@
+\documentclass[11pt,b5paper,oneside,lualatex]{ltjsarticle} % LuaLaTeXの場合
+%\documentclass[11pt,a4paper,oneside,titlepage,lualatex]{ltjsreport} % 表紙付き, 章から始まる形式
+
+%SumatraPDFの逆順検索でエラーが出た時は以下のコマンドラインをSumatraPDFの設定→オプションで入力する
+%"C:\Program Files (x86)\TeXstudio\texstudio.exe" "%f" -line %l
+
+\usepackage{luatexja} % ltjclasses, ltjsclasses を使うときはこの行不要
+\usepackage[marginparwidth=0pt,margin=10truemm]{geometry} % 余白の設定
+% スマホやタブレットでも読みやすいB5サイズの文書を書くときは, 1行目の\documentclassのオプションで「a4paper」を「b5paper」にして, 余白設定はmargin=10truemmにすると自分好み
+
+% --------------------------------------------------------------------------
+%		パッケージとコマンド
+% --------------------------------------------------------------------------
+
+\usepackage{mypackage} % よく使うパッケージ. 「C:\w32tex\share\texmf-local\tex\(好きなファイル名)」に置いたmypackage.styを読み込む
+\usepackage{mycommand} % 自分で定義したコマンド. 「C:\w32tex\share\texmf-local\tex\(好きなファイル名)」に置いたmycommand.styを読み込む
+
+\usetikzlibrary{knots}
+
+%\usetikzlibrary{graphs,graphs.standard,graphdrawing} % TikZでグラフを描く
+%\usegdlibrary{trees,force,layered} %graphdrawingの子ライブラリ
+
+\DeclareMathOperator{\WRT}{WRT}
+\DeclareMathOperator{\perm}{perm}
+
+% --------------------------------------------------------------------------
+%		ハイパーリンク
+% --------------------------------------------------------------------------
+
+%目次にもハイパーリンクが付く. プリアンブルのできるだけ後ろに書く. 
+\usepackage[luatex, pdfencoding=auto,hypertexnames=false]{hyperref}
+\hypersetup{% hyperrefオプションリスト
+	colorlinks=true,
+	linkcolor=DarkGoldenrod, % リンクの色
+	citecolor=SlateBlue, % 引用文献の色
+	urlcolor=violet, % URLの色
+}
+
+% --------------------------------------------------------------------------
+%		定理環境と相互参照
+% --------------------------------------------------------------------------
+
+% 参照番号の設定
+\numberwithin{equation}{section} % 式番号
+\newtheorem{theoremcounter}{}[section] % 定理番号のオプションを選択. [section]を[chapter]にすれば章番号から始まり「定理 1.1.1」のようになる.
+\newtheorem{exercisecounter}{}[] % 演習問題番号のオプションを選択.
+
+% 自作スタイルファイル読み込み
+\usepackage{mytheorem} % cleverefパッケージによる定理環境と相互参照. 「C:\w32tex\share\texmf-local\tex\(好きなファイル名)」に置いたmytheorem.styを読み込む. \usepackage{hyperref}の後に書く. 
+
+%\usepackage{myprogram} % ハイライト付きソースコード. 「C:\w32tex\share\texmf-local\tex\(好きなファイル名)」に置いたmyprogram.styを読み込む
+
+% --------------------------------------------------------------------------
+\begin{document}
+% --------------------------------------------------------------------------
+
+\title{不定値HグラフのWRT不変量}
+\author{村上友哉}
+\date{\today}
+
+\maketitle
+
+%シンプルな目次
+\tableofcontents
+
+% --------------------------------------------------------------------------
+
+\section{導入と主結果} \label{sec:intro}
+
+% --------------------------------------------------------------------------
+
+本稿の目標は, Hグラフを手術図式に持つ$ 3 $次元ホモロジー球面のWitten-Reshetikhin-Turaev不変量（WRT不変量）が深さ$ 2 $の量子モジュラー形式をなすことを示すことである. 
+ここで\textbf{Witten-Reshetikhin-Turaev不変量（WRT不変量）}とはコンパクト境界無し$ 3 $次元多様体$ M $に対して定義される重要な不変量である. 
+これは正整数$ k \in \Z_{>0} $でラベル付けされた複素数列$ \WRT_k(M) $であり, その$ k \to \infty $に関する漸近展開にはChern-Simons不変量やReidemeisterトーションなどの重要な不変量が現れると予想されている（Wittenの漸近展開予想）. 
+漸近展開予想を解決する上で足掛かりとなるのが, Zagier~\cite{Zagier_quantum}によって見出された\textbf{量子モジュラー形式}という概念である. 
+WRT不変量が量子モジュラー形式をなすことが分かれば, 漸近展開予想の解決が期待できるのである. 
+
+このような枠組みの下で様々な研究が行われてきたが, 中でも非常に広いクラスの多様体に関する仕事としてGukov-Pei-Putrov-Vafa~\cite{GPPV}によるものがある. 彼らは手術図式の絡み行列が負定値となるplumbed多様体に対して\textbf{ホモロジカルブロック}という$ q $級数を定義し, その冪根への極限がWRT不変量を与え, 更に量子モジュラー形式をなすことを予想した. 
+この予想はSeifertホモロジー球面の場合には樋上~\cite{Hikami_Seifert}が本質的に解決しており, また非Seifert多様体の場合は特にHグラフから定まるホモロジー球面に対して森-村上\cite{MM}が解決した. 
+しかしながら, これらの研究はplumbed多様体の中でも特に手術図式の絡み行列が負定値となるものを考えているという問題点がある. 
+絡み行列が負定値という条件はSeifert多様体の場合には本質的に空な条件なので問題にならないが, 非Seifert多様体の場合には絡み行列が負定値とならないものも非常に多く存在する. 
+そこで本稿では, Seifert多様体というクラスを超える最も単純なクラスであるHグラフ$ \Gamma $から定まるホモロジー球面$ M(\Gamma) $に対して, 絡み行列$ W $が不定値の場合にWRT不変量の量子モジュラー性を考察する. 
+主結果は\cref{thm:WRT_HB}である. 
+
+本稿の構成を述べる. 
+\cref{sec:fund_data}では本稿を通して用いる記号やHグラフに関する基本的な性質を述べる. 
+\cref{sec:Gauss_sum}では本稿で必要なGauss和に関する性質をまとめる. 
+\cref{sec:asymptotic_formula}では漸近展開の公式を導出する. 
+\cref{sec:Zwegers_theta}ではZwegersの不定値テータ関数について考察する. 
+\cref{sec:infinite_series}ではWRT不変量を極限値に持つような無限級数を新しく定義する. 
+\cref{sec:examples}では本稿で考察するHグラフの具体例と, 本稿の議論から得られるPoincar\'{e}ホモロジー球面の性質を述べる. 
+\cref{sec:future}では今後の課題について述べる. 
+
+% --------------------------------------------------------------------------
+
+\section{Hグラフから定まる基礎データと記号の準備} \label{sec:fund_data}
+
+% --------------------------------------------------------------------------
+
+本節では本稿を通して用いる記号を準備する. 
+
+以下の記号を固定する. 
+
+\begin{symb}
+	\begin{itemize}
+		\item 正整数$ k \in \Z_{>0} $.
+		\item 上半平面の点$ \tau $.
+	\end{itemize}
+\end{symb}
+
+これらの記号に対し以下の記法を定める. 
+
+\begin{dfn}
+	\begin{itemize}
+		\item $ \zeta_k := e^{2\pi\iu/k} $.
+		\item 絶対値が$ 1 $未満の複素数$ q := e^{2\pi\iu\tau} $.
+	\end{itemize}
+\end{dfn}
+
+また以下の記法も本稿を通して用いる. 
+
+\begin{dfn}
+	\begin{itemize}
+		\item 複素数$ z $に対し$ \bm{e}(z) := e^{2\pi\iu z} $.
+		\item 実数$ x $に対し
+		\begin{align}
+			\sgn(x) &:= 
+			\begin{cases}
+				1 & x \ge 0, \\
+				-1 & x < 0,
+			\end{cases}
+		\\
+		\sgn_0(x) &:= 
+		\begin{cases}
+			1 & x > 0, \\
+			0 & x = 0, \\
+			-1 & x < 0.
+		\end{cases}
+		\end{align}
+	\end{itemize}
+\end{dfn}
+
+本稿を通して以下のHグラフを固定する. 
+
+\begin{symb}
+	整数$ w_1, \dots, w_6 \in \Z $で重み付けられたHグラフ$ \Gamma $（\cref{fig:H-graph}）であって, その隣接行列$ W $の行列式が$ \pm 1 $となるもの.
+\end{symb}
+
+\begin{figure}[htb]
+	\centering
+	\begin{tikzpicture}
+		\node[shape=circle,fill=black, scale = 0.4] (1) at (0,0) { };
+		\node[shape=circle,fill=black, scale = 0.4] (2) at (1.5,0) { };
+		\node[shape=circle,fill=black, scale = 0.4] (3) at (-1,-1) { };
+		\node[shape=circle,fill=black, scale = 0.4] (4) at (-1,1) { };
+		\node[shape=circle,fill=black, scale = 0.4] (5) at (2.5,1) { };
+		\node[shape=circle,fill=black, scale = 0.4] (6) at (2.5,-1) { };
+		
+		\node[draw=none] (B1) at (0,0.4) {$ w_1 $};
+		\node[draw=none] (B2) at (1.5, 0.4) {$ w_2 $};
+		\node[draw=none] (B3) at (-0.6,1) {$ w_3 $};
+		\node[draw=none] (B4) at (-0.6,-1) {$ w_4 $};
+		\node[draw=none] (B5) at (2.1,1) {$ w_5 $};		
+		\node[draw=none] (B6) at (2.1,-1) {$ w_6 $};	
+		
+		\path [-](1) edge node[left] {} (2);
+		\path [-](1) edge node[left] {} (3);
+		\path [-](1) edge node[left] {} (4);
+		\path [-](2) edge node[left] {} (5);
+		\path [-](2) edge node[left] {} (6);
+	\end{tikzpicture}
+	\caption{Hグラフ} \label{fig:H-graph}
+\end{figure}
+
+このようなグラフの重さとしてどのような具体例があるかは\cref{sec:examples}で紹介する. 
+
+Hグラフ$ \Gamma $に対して以下の記法を定める. 
+
+\begin{dfn}
+	\begin{itemize}
+		%		\item $ \Gamma $から定まる絡み目$ \calL(\Gamma) $.
+		\item $ M(\Gamma) $: $ 3 $次元球面$ S^3 $を手術図式$ \Gamma $でDehn手術することで得られるコンパクト境界無し$ 3 $次元多様体.
+		\item $ W $: $ \Gamma $の隣接行列.
+		\item $ \sigma_W $: $ W $の正の固有値の数から負の固有値の数を引いた整数.
+		\item $ S \in \Sym_2^+(\Z) $: $ -W^{-1} \in \Sym_6^+(\Z) $の左上の$ 2 \times 2 $ブロック行列.
+		\item $ \sigma_S $: $ S $の正の固有値の数から負の固有値の数を引いた整数.
+		\item $ Q(m, n) := {}^t\!(m, n) S (m, n) = -{}^t\!(m, n, 0, 0, 0, 0) W^{-1} (m, n, 0, 0, 0, 0) $: $ S $に対応する二変数二次形式.
+		\item 整数
+		\[
+		M := w_3 w_4, \quad
+		N := w_5 w_6, \quad
+		a := -w_2 w_5 w_6 + w_5 + w_6, \quad
+		c := -w_1 w_3 w_4 + w_3 + w_4.
+		\]
+		\item 
+		有理関数
+		\[
+		G(q) := \frac{(q^{w_3} - q^{-w_3})(q^{w_4} - q^{-w_4})}{q^{M} - q^{-M}}, \quad
+		H(q) := \frac{(q^{w_5} - q^{-w_5})(q^{w_6} - q^{-w_6})}{q^{N} - q^{-N}}.
+		\]
+		\item 
+		\[
+		\calT := \left\{ \frac{1}{2} + \frac{e_3}{2w_3} + \frac{e_4}{2w_4} \relmiddle{|} e_3, e_4 \in \{ \pm 1 \} \right\}, \quad
+		\calU := \left\{ \frac{1}{2} + \frac{e_5}{2w_5} + \frac{e_6}{2w_6} \relmiddle{|} e_5, e_6 \in \{ \pm 1 \} \right\}.
+		\]
+		\item $ \calS := \calT \times \calU. $
+		\item 非零な整数の組$ (w, w') \in (\Z \setminus \{ 0 \})^2 $に対し
+		\[
+		\chi^{(w, w')}(n) := 
+		\sum_{\substack{
+			e, e' \in \{ \pm 1 \} \\
+			n \equiv w'e + we' +ww' \bmod 2ww'
+		}}
+		ee'
+		\]
+		とおく.
+		\item 写像$ \chi \colon \frac{1}{2M}\Z/\Z \to \Z, \, \psi \colon \frac{1}{2N}\Z/\Z \to \Z $をそれぞれ
+		$ \chi(\alpha) := \chi^{(w_3, w_4)}(2M\alpha), \, \psi(\beta) := \chi^{(w_5, w_6)}(2N\beta) $で定める. 
+		\item 写像$ \veps \colon (2S)^{-1}(\Z^2)/\Z^2 = \frac{1}{2M}\Z/\Z \oplus \frac{1}{2N}\Z/\Z \to \Z $を
+		$ \veps(\alpha, \beta) := \chi(\alpha) \psi(\beta) $で定める.
+	\end{itemize}
+\end{dfn}
+
+\begin{rem}
+	対称行列$ S $として$ W $ではなく$ -W $の逆行列の左上ブロック行列を取るのは不自然な感じがするが, これは元々\cite{GPPV}で$ W $が負定値な場合に考察していたのを踏まえて\cite{MM}では$ S $として正定値行列を取ったためである. 
+	本稿だけを読む分には混乱する記号法ではあるが, 他の文献と比較したときの混乱を避けるために本稿でも\cite{MM}と同じ記法を採用する. 
+\end{rem}
+
+重さ$ w_1, \dots, w_6 $と$ 3 $次元多様体$ M(\Gamma) $について以下の性質が成り立つ. 
+
+\begin{rem}
+	$ 3 $次元多様体$ M(\Gamma) $はplumbed多様体と呼ばれるクラスに属する多様体である. 
+	今$ H_1(M(\Gamma), \Z) \cong \Z^6/W(\Z^6) $が成り立つので, $ M(\Gamma) $がホモロジー球面であること, すなわち$ H_1(M, \Z) = 0 $が成り立つことと$ W $がユニモジュラー, すなわち$ \det W = \pm 1 $が成り立つことは同値である. 
+	
+	また$ \det W \neq 0 $より$ w_3 w_4 w_5 w_6 \neq 0 $が従う. 
+	
+	異なるplumbingグラフ（すなわち整数で重み付けられた木）が同相な$ 3 $次元多様体を定めるためには, それらがNeumann移動（\cref{fig:Neumann}）で移り合うことが必要十分である（\cite[Proposition 2.2]{Neumann_Lecture}, \cite[Theorem 3.1]{Neumann_work}）.
+	従って$ \Gamma $の重さについて$ w_3, w_4, w_5, w_6 $のいずれかが$ \pm 1 $に等しいことと$ M(\Gamma) $がSeifertであることは同値である. 
+\end{rem}
+
+\begin{figure}[htp]
+	\centering
+	\begin{tikzpicture}
+		%Move I
+		\draw[fill]
+		%隣接3頂点
+		(-1.5,0) node[above=0.1cm]{$w \pm 1$} circle(0.5ex)--
+		(0,0) node[above=0.1cm]{$\pm 1$} circle(0.5ex)--
+		(1.5,0) node[above=0.1cm]{$w' \pm 1$} circle(0.5ex)
+		%左頂点から伸びる辺
+		(-2.5,0.5) node[above]{}--(-1.5,0) node[above]{}
+		(-2.3,0) node[rotate=270]{$\cdots$}
+		(-2.5,-0.5) node[above]{}--(-1.5,-0) node[above]{}
+		%右頂点から伸びる辺
+		(1.5,0) node[above]{}--(2.5,0.5) node[above]{}
+		(2.3,0) node[rotate=270]{$\ldotp\ldotp\ldotp\ldotp$}
+		(1.5,0) node[above]{}--(2.5,-0.5) node[above]{}
+		%矢印
+		(0,-1) node[rotate=270]{$\longleftrightarrow$}
+		%隣接2頂点
+		(-1,-2) node[above=0.1cm]{$ w $} circle(0.5ex)--
+		(1,-2) node[above=0.1cm]{$ w' $} circle(0.5ex)
+		%左頂点から伸びる辺
+		(-2,-1.5) node[above]{}--(-1,-2) node[above]{}
+		(-1.8,-2) node[rotate=270]{$\cdots$}
+		(-2,-2.5) node[above]{}--(-1,-2) node[above]{}
+		%右頂点から伸びる辺
+		(1,-2) node[above]{}--(2,-1.5) node[above]{}
+		(1.8,-2) node[rotate=270]{$\ldotp\ldotp\ldotp\ldotp$}
+		(1,-2) node[above]{}--(2,-2.5) node[above]{};
+		%Move II
+		\draw[fill]
+		%隣接2頂点
+		(4.7,0) node[above=0.1cm]{$w \pm 1$} circle(0.5ex)--
+		(5.7,0) node[above=0.1cm]{$\pm 1$} circle(0.5ex)
+		%左頂点から伸びる辺
+		(3.9,0.5) node[above]{}--(4.7,0) node[above]{}
+		(4.1,0) node[rotate=270]{$\cdots$}
+		(3.9,-0.5) node[above]{}--(4.7,0) node[above]{}
+		%矢印
+		(5,-1) node[rotate=270]{$\longleftrightarrow$}
+		%1頂点
+		(5,-2) node[above=0.1cm]{$w$} circle(0.5ex)
+		%左頂点から伸びる辺
+		(4,-1.5) node[above]{}--(5,-2) node[above]{}
+		(4.2,-2) node[rotate=270]{$\cdots$}
+		(4,-2.5) node[above]{}--(5,-2) node[above]{};
+		%Move III
+		\draw[fill]
+		%隣接2頂点
+		(8.5,0) node[above=0.1cm]{$w$} circle(0.5ex)--
+		(10,0) node[above=0.1cm]{$0$} circle(0.5ex)--
+		(11.5,0) node[above=0.1cm]{$w'$} circle(0.5ex)
+		%左頂点から伸びる辺
+		(7.5,0.5) node[above]{}--(8.5,0) node[above]{}
+		(7.7,0) node[rotate=270]{$\cdots$}
+		(7.5,-0.5) node[above]{}--(8.5,0) node[above]{}
+		%右頂点から伸びる辺
+		(11.5,0) node[above]{}--(12.5,0.5) node[above]{}
+		(12.3,0) node[rotate=270]{$\ldotp\ldotp\ldotp\ldotp$}
+		(11.5,0) node[above]{}--(12.5,-0.5) node[above]{}
+		%矢印
+		(10,-1) node[rotate=270]{$\longleftrightarrow$}
+		%1頂点
+		(10,-2) node[above=0.2cm]{$w + w'$} circle(0.5ex)
+		%左頂点から伸びる辺
+		(9,-1.5) node[above]{}--(10,-2) node[above]{}
+		(9.2,-2) node[rotate=270]{$\cdots$}
+		(9,-2.5) node[above]{}--(10,-2) node[above]{}
+		%右頂点から伸びる辺
+		(10,-2) node[above]{}--(11,-1.5) node[above]{}
+		(10.8,-2) node[rotate=270]{$\ldotp\ldotp\ldotp\ldotp$}
+		(10,-2) node[above]{}--(11,-2.5) node[above]{};
+	\end{tikzpicture}
+	\caption{Neumann移動}
+	\label{fig:Neumann}
+\end{figure}
+
+対称行列$ S $は以下の性質を持つ. 
+
+\begin{rem} \label{rem:S}
+	\begin{enumerate}
+		\item \label{item:rem:S1} $ ac - MN = \det W $.
+		\item \label{item:rem:S2}
+		直接計算により
+		\[
+		S^{-1} = \pmat{c/M & -1 \\ -1 & a/N}
+		\]
+		が成り立つので\cref{item:rem:S1}より
+		\[
+		S = \det W \pmat{Ma & MN \\ MN & Nc}.
+		\]
+		\item \label{item:rem:S3} $ Q(m, n) = Mam^2 + 2MNmn + Ncn^2 $.
+		\item \label{item:rem:S4}
+		\[
+		A := \pmat{c & -N\\ -M & a} \in \SL_2(\Z)
+		\]
+		とおくと
+		\[
+		SA = \pmat{M & 0 \\ 0 & N}
+		\]
+		が成り立つので$ S(\Z^2)= M\Z \oplus N\Z \subset \Z^2, \, (2S)^{-1}(\Z^2)/\Z^2 = \frac{1}{2M}\Z/\Z \oplus \frac{1}{2N}\Z/\Z $が成り立つ.
+		\item \label{item:rem:S5}
+		\begin{align}
+			\sigma_S 
+			&=
+			\begin{cases}
+				2 & \text{ if } MN>0, a > 0, \\
+				0 & \text{ if } MN<0, \\
+				-2 & \text{ if } MN>0, a < 0, \\
+			\end{cases}
+			\\
+			&=
+			(1 + \sgn(MN)) \sgn(a).
+		\end{align}
+	\end{enumerate}
+\end{rem}
+
+指標$ \chi, \psi $は以下の性質を持つ. 
+
+\begin{rem} \label{rem:veps_property}
+	\begin{enumerate}
+		\item \label{item:rem:veps_property_det}
+		$ \gcd(w_3, w_4) $は$ c $と$ M $を割るので$ ac - MN = 1 $の約数である. 
+		従って$ \gcd(w_3, w_4) = 1 $が成り立つ. 
+		同様に$ \gcd(w_5, w_6) = 1 $が成り立つ. 
+		従って指標$ \chi, \psi $はwell-definedである. 
+%		\item \label{item:rem:veps_property_G(q)}
+%		$ \abs{q} < 1 $に対し
+%		\begin{align}
+%			G(q) =
+%			-\sum_{\alpha \in \frac{1}{2M} \Z_{\ge 0}} \chi(\alpha) q^{2M\alpha}, \quad
+%			H(q) =
+%			-\sum_{\beta \in \frac{1}{2N} \Z_{\ge 0}} \psi(\beta) q^{2N\beta}.
+%		\end{align}
+		\item \label{item:rem:veps_property_zero}
+		\[
+		\sum_{\alpha \in \frac{1}{2M}\Z/\Z} \chi(\alpha) = 0, \quad
+		\sum_{\beta \in \frac{1}{2N}\Z/\Z} \psi(\beta) = 0.
+		\]
+		\item \label{item:rem:veps_property_chi}
+		$ \chi(\alpha) \neq 0 $なる$ \alpha \in \frac{1}{2M}\Z $に対し
+		$ 2M \alpha \in \Z \smallsetminus M\Z $であり, $ M\alpha \bmod \Z, \, M\alpha^2 \bmod \Z $は$ \alpha $によらない. 
+		\item \label{item:rem:veps_property_psi}
+		$ \psi(\beta) \neq 0 $なる$ \beta \in \frac{1}{2N}\Z $に対し
+		$ 2N \beta \in \Z \smallsetminus N\Z $であり, $ N\beta \bmod \Z, \, N\beta^2 \bmod \Z $は$ \beta $によらない. 
+	\end{enumerate}
+\end{rem}
+
+有理関数$ G(q), H(q) $や集合$ \calT, \calU $は以下の性質を持つ. 
+
+\begin{rem} \label{rem:G(q)_calS_property}
+	\begin{enumerate}
+		\item \label{item:rem:G(q)_calS_subset}
+		$ w_3, w_4 \in \{ \pm 1 \} $でないなら
+		\[
+		\calT \subset \frac{1}{2M} \Z \smallsetminus \frac{1}{2} \Z
+		\]
+		である. 
+		同様に$ w_5, w_6 \in \{ \pm 1 \} $でないなら
+		\[
+		\calU \subset \frac{1}{2N} \Z \smallsetminus \frac{1}{2} \Z
+		\]
+		である. 
+%		\item \label{item:rem:G(q)_calS_bij}
+%		$ w_3, w_4 \notin \{ \pm 1 \} $なら自然な射影$ \Q \to \Q/\Z $は全単射
+%		\[
+%		\calT \cong \left\{ \alpha \in \frac{1}{2M}\Z/\Z \relmiddle{|} \chi(\alpha) \neq 0 \right\}
+%		\]
+%		を誘導する. 
+%		同様に$ w_5, w_6 \notin \{ \pm 1 \} $なら自然な射影$ \Q \to \Q/\Z $は全単射
+%		\[
+%		\calU \cong \left\{ \beta \in \frac{1}{2N}\Z/\Z \relmiddle{|} \psi(\beta) \neq 0 \right\}
+%		\]
+%		を誘導する. 
+%		$ w_3, w_4, w_5, w_6 $の中に$ \pm 1 $に一致するものがある場合はこれは全単射にならない. 
+		\item \label{item:rem:G(q)_calS_rep}
+		$ w_3, w_4 \notin \{ \pm 1 \} $なら
+		\[
+		\min \calT
+		=
+		\frac{1}{2} - \frac{1}{2 \abs{w_3}} - \frac{1}{2 \abs{w_4}}
+		=
+		\frac{(\abs{w_3} - 1) (\abs{w_4} - 1) - 1}{2 \abs{M}}
+		> 0
+		\]
+		なので
+		\[
+		\calT = \left\{ \alpha \in \frac{1}{2M}\Z/\Z \cap \left[ 0, 1 \right) \relmiddle{|} \chi(\alpha) \neq 0 \right\}
+		\]
+		である. 
+		同様に$ w_5, w_6 \notin \{ \pm 1 \} $なら
+		\[
+		\calU = \left\{ \beta \in \frac{1}{2N}\Z/\Z \cap \left[ 0, 1 \right) \relmiddle{|} \psi(\beta) \neq 0 \right\}
+		\]
+		である. 
+		\item \label{item:rem:G(q)_calS_rep_Seifert}
+		$ w_3 \in \{ \pm 1 \}, w_4 \notin \{ \pm 1 \} $なら
+		\[
+		\calT = \left\{ \pm \frac{1}{2 w_4}, 1 \pm \frac{1}{2 w_4} \right\}, \quad
+		\chi \left( \pm \frac{1}{2 w_4} \right) = \mp w_3, \quad
+		\chi \left( 1 \pm \frac{1}{2 w_4} \right) = \pm w_3
+		\]
+		であり, 
+		$ w_3, w_4 \in \{ \pm 1 \} $なら
+		\[
+		\calT = \left\{ \pm \frac{1}{2}, \frac{3}{2} \right\}, \quad
+		\chi \left( -\frac{1}{2} \right) = w_3 w_4, \quad
+		\chi \left( \frac{1}{2} \right) = -2 w_3 w_4, \quad
+		\chi \left( \frac{3}{2} \right) = w_3 w_4, \quad
+		\]
+		である. 
+		$ w_5, w_6, \calU $についても同様である. 
+		\item \label{item:rem:G(q)_calS_zero}
+		\[
+		\sum_{\alpha \in \calT} \chi(\alpha) = 0, \quad
+		\sum_{\beta \in \calU} \psi(\beta) = 0.
+		\]
+		\item \label{item:rem:G(q)_calS_zero_alpha}
+		\begin{align}
+			\sum_{\alpha \in \calT} \chi(\alpha) \alpha 
+			=
+			\sum_{ e_3, e_4 \in \{ \pm 1 \} }
+			e_3 e_4 \left( \frac{1}{2} + \frac{e_3}{2w_3} + \frac{e_4}{2w_4} \right)
+			=
+			\sum_{ e_3, e_4 \in \{ \pm 1 \} }
+			\left( \frac{e_4}{2w_3} + \frac{e_3}{2w_4} \right)
+			= 0.
+		\end{align}
+		同様に
+		\[		
+		\sum_{\beta \in \calU} \psi(\beta) \beta = 0.
+		\]
+		\item \label{item:rem:G(q)_calS_expansion}
+		$ \abs{q}^{\sgn(M)} < 1 $に対し
+		\[
+		G(q) = -\sum_{\alpha \in \calT} \chi(\alpha) \sum_{m=0}^{\infty} q^{2M(m + \alpha)}.
+		\]
+		また$ \abs{q}^{\sgn(N)} < 1 $に対し
+		\[
+		H(q) = -\sum_{\beta \in \calU} \psi(\beta) \sum_{n=0}^{\infty} q^{2N(n + \beta)}.
+		\]
+		\item \label{item:rem:G(q)_calS_positive}
+		$ \calT $や$ \calU $は$ \Q_{>0} $の部分集合とは限らない. 		
+%		\item \label{item:rem:G(q)_calS_positive}
+%		$ w_3, w_4 \notin \{ \pm 1 \} $のとき, またその時に限り$ \calT \subset \Q_{>0} $が成り立つ. 
+%		また
+%		$ w_5, w_6 \notin \{ \pm 1 \} $のとき, またその時に限り$ \calU \subset \Q_{>0} $が成り立つ. 
+	\end{enumerate}
+\end{rem}
+
+次節以降では次の記号を用いる. 
+
+\begin{dfn}
+	\begin{itemize}
+		\item 有限集合$ [k] := \{ 0, \dots, k-1 \} $.
+		\item $ i = 1, 2 $に対し有限集合$ \calS_i + [k] := \{ \alpha + m \mid \alpha \in \calS_i, m \in [k] \} $.
+		\item 有限集合$ \calS + [k]^2 := \{ \gamma + (m, n) \mid \gamma \in \calS, m, n \in [k] \} = (\calT + [k]) \times (\calU + [k]) $.
+	\end{itemize}
+\end{dfn}
+
+% --------------------------------------------------------------------------
+
+\section{Gauss和の性質} \label{sec:Gauss_sum}
+
+% --------------------------------------------------------------------------
+
+本節では本稿で必要なGauss和の性質をまとめる. 
+
+% --------------------------------------------------------------------------
+
+\subsection{Gauss和の相互則} \label{subsec:reciprocity}
+
+% --------------------------------------------------------------------------
+
+まず, 次の\textbf{Gauss和の相互則}はWRT不変量の直接計算をはじめとする様々な計算に利用される重要な性質である. 
+
+\begin{prop}[{\cite[Theorem 1]{DT}}] \label{prop:reciprocity}
+	$ L $を階数$ n $の$ \Z $上の格子, その上の非退化双線形形式を$ \sprod{\cdot, \cdot} $とし, その双対格子を
+	$ L' := \{ y \in L \otimes \R \mid \sprod{x, y} \in \Z \text{ for all } x \in L \} $とおく.
+	$ k \in \abs{L'/L} \Z_{>0} $と$ u \in \frac{1}{k} L $を取る. 
+	$ h \colon L \otimes \Q \to L \otimes \Q $は自己随伴同型であって, $ h(L') \subset L' $を満たし任意の$ y \in L' $に対し$ \frac{k}{2} \sprod{y, h(y)} \in \Z $ が成り立つものとする. 
+	$ \sigma $を二次形式$ \sprod{x, h(y)} $の符号とする. 
+	このとき
+	\begin{align}
+		&\sum_{x \in L/kL} \bm{e} \left( \frac{1}{2k} \sprod{x, h(x)} + \sprod{x, u} \right)
+		= \,
+		&\frac{\bm{e}(\sigma/8) k^{n/2}}{\sqrt{\abs{L'/L} \abs{\det h}}}
+		\sum_{y \in L'/h(L')} \bm{e} \left( -\frac{k}{2} \sprod{y + u, h^{-1}(y + u)} \right)
+	\end{align}
+	が成り立つ. 
+\end{prop}
+
+% --------------------------------------------------------------------------
+
+\subsection{重み付きGauss和の消滅性} \label{subsec:Gauss_sum_vanish}
+
+% --------------------------------------------------------------------------
+
+WRT不変量の量子モジュラー性を示す上では次の\textbf{重み付きGauss和の消滅性}が要となる. 
+この命題は\cite[Proposition 4.2 (ii), (iii)]{MM}の仮定を緩めて結論を強めたものである. 
+
+\begin{prop} \label{prop:Gauss_sum_vanish}
+	以下の記号を固定する. 
+	\begin{itemize}
+		\item 整数$ k, M, N, a, b, c \in \Z_{>0} $であって$ MN \neq 0, \, ac - MNb^2 = \pm 1 $なるもの, 
+		\item 整数係数二次形式$ Q(m, n) = Mam^2 + 2MNbmn + Ncn^2 $,
+		\item 行列式が$ MN $の対称行列
+		\[
+		S = \pmat{Ma & MNb \\ MNb & Nc},
+		\]
+		\item 有限部分集合	$ \calT \subset \frac{1}{2M}\Z \smallsetminus \frac{1}{2}\Z, \calU \subset \frac{1}{2N}\Z \smallsetminus \frac{1}{2}\Z $.
+		\item 写像	$ \chi \colon \calT \to \bbC, \psi \colon \calU \to \bbC $,
+		\item 写像
+%		$ \veps \colon \frac{1}{2M}\Z \times \frac{1}{2N}\Z \to \frac{1}{2M}\Z/\Z \times \frac{1}{2N}\Z/\Z \to \bbC $.
+		\[
+		\begin{array}{cccc}
+			\veps \colon & \dfrac{1}{2M}\Z \times \dfrac{1}{2N}\Z & \longrightarrow & \bbC \\
+			& {}^t\!(\alpha, \beta) & \longmapsto & \chi(\alpha) \psi(\beta),
+		\end{array}
+		\]
+		\item 写像$ B \colon \frac{1}{2M}\Z \to \bbC $であって
+		\begin{equation} \label{eq:B_vanish}
+			\sum_{\alpha \in \calT + [k]} \chi(\alpha) B(\alpha) = 0
+		\end{equation}
+		なるもの, 
+		\item 写像$ C \colon \frac{1}{2N}\Z \to \bbC $.
+	\end{itemize}
+	これらの記号が以下の条件を満たすとする. 
+	\begin{enumerate}[label=(\alph*),ref=(\alph*)]
+		\item \label{item:prop:Gauss_sum_vanish_zero}
+		\[
+		\sum_{\alpha \in \calT} \chi(\alpha) = 0, \quad
+		\sum_{\beta \in \calU} \psi(\beta) = 0.
+		\]
+		\item \label{item:prop:Gauss_sum_vanish_chi}
+		$ \alpha \in \calT $に対し$ M\alpha \bmod \Z, \, M\alpha^2 \bmod \Z $は$ \alpha $によらない. 
+		\item \label{item:prop:Gauss_sum_vanish_psi}
+		$ \beta \in \calU $に対し$ N\beta \bmod \Z, \, N\beta^2 \bmod \Z $は$ \beta $によらない. 
+	\end{enumerate}
+	このとき次が成り立つ. 
+	\begin{enumerate}
+		\item \label{item:prop:Gauss_sum_vanish1}
+		\begin{align}
+			&\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS + [k]^2} \veps(\gamma)
+			\bm{e}\left( \frac{1}{k} Q(\gamma) \right) C(\beta)
+			\\
+			= \,
+			&\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS} 
+			\veps(\gamma) \alpha
+			\sum_{l = {}^t\!(m, n) \in [k]^2}
+			\bm{e}\left( \frac{1}{k} Q(\gamma + l) \right) C(\beta + n)
+			\\			
+			= \,
+			&0.
+		\end{align}
+		\item \label{item:prop:Gauss_sum_vanish2}
+		\begin{align}
+			&\sum_{l \in k\Z \oplus \Z/2kS(\Z^2)} \bm{e}\left( \frac{1}{4k} {^t\!l} S^{-1} l \right)
+			\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS + [k]^2} \veps(\gamma)
+			\bm{e}\left( \frac{1}{k} {^t\!\gamma} l \right) B(\alpha) C(\beta) \\
+			= \,
+			&\sum_{l \in k\Z^2/2kS(\Z^2)} \bm{e}\left( \frac{1}{4k} {^t\!l} S^{-1} l \right)
+			\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS + [k]^2} \veps(\gamma)
+			\bm{e}\left( \frac{1}{k} {^t\!\gamma} l \right) B(\alpha) C(\beta) \\
+			= \,
+			&0.
+		\end{align}
+	\end{enumerate}	
+\end{prop}
+
+%\begin{ex}
+%	\cref{prop:Gauss_sum_vanish}に現れる写像$ B \colon \frac{1}{2M}\Z / k\Z \to \bbC $の例を挙げる. 
+%	以下ではこの写像を$ B \colon \frac{1}{2M}\Z \cap \left[ 0, k \right) \to \bbC $と同一視する. 
+%	
+%	一つ目の例は$ 1 $次Bernoulli多項式$ B_1(\alpha) := \alpha - 1/2 $である. 
+%	これが\cref{eq:B_vanish}を満たすことはBernoulli多項式の乗法公式から従う. 
+%	この例は\cite[Proposition 4.2 (iv)]{MM}に対応する. 
+%	
+%	また定数関数も\cref{eq:B_vanish}を満たすので, 上の例と併せることで$ B(\alpha) = \alpha $も\cref{eq:B_vanish}を満たすことが分かる. 
+%	この例は\cite[Proposition 4.2 (v)]{MM}に対応する. 
+%\end{ex}
+
+\begin{rem}
+	\cite[Proposition 4.2]{MM}では二次形式の正定値性を課しているが, 証明を読むとその仮定は要らないことが分かるので, \cref{prop:Gauss_sum_vanish}では正定値性の仮定を非退化性にまで緩めてある. 
+	本稿で考察する二次形式は正定値とは限らないので, この仮定が外せるというのは重要なポイントである. 
+	
+	また\cite[Proposition 4.2]{MM}では写像
+	$ \chi \colon \frac{1}{2M}\Z/\Z \to \bbC, \psi \colon \frac{1}{2N}\Z/\Z \to \bbC $
+	を考えているが, \cref{prop:Gauss_sum_vanish}ではこれを
+	$ \chi \colon \calT \to \bbC, \psi \colon \calU \to \bbC $
+	に置き換えている. 
+	これにより\cite[Proposition 4.2]{MM}に現れる$ \gamma \in (2S)^{-1}(\Z^2)/\Z^2 $は\cref{prop:Gauss_sum_vanish}では$ \gamma \in \calS + [k]^2 $に置き換わっている. 
+\end{rem}
+
+\cref{prop:Gauss_sum_vanish}の証明には\cite[Lemma 4.7 and 4.8]{MM}の証明から従う次の補題を用いる. 
+なお, ここでは\cite[Lemma 4.7 and 4.8]{MM}で仮定していた$ \gcd(2M, 2M \alpha) = 1 $という条件は緩めてある. 
+
+\begin{lem}[{\cite[補題6.8]{Mura}}] \label{lem:Gauss_sum_indep}
+	整数$ k, M \in \Z \smallsetminus \{ 0 \}, a, b \in \Z $を$ \gcd(a, M) = 1 $なるものとすると, 
+	$ \alpha \in \frac{1}{2M}\Z \smallsetminus \frac{1}{2} \Z $に対し定まる複素数
+	\[
+	\sum_{m \in \Z/k\Z + \alpha} \bm{e} \left( \frac{M}{k} \left( a m^2 + b m \right) \right)
+	\]
+	は$ M\alpha^2, M\alpha \bmod \Z $のみに依存する. 
+\end{lem}
+
+\begin{proof}[$ \cref{prop:Gauss_sum_vanish} $の証明]
+	\cref{item:prop:Gauss_sum_vanish1}において, 一つ目の式は
+	\begin{align}
+		&\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS + [k]^2} \veps(\gamma)
+		\bm{e}\left( \frac{h}{k} Q(\gamma) \right) C(\beta) \\
+		= \,
+		&\sum_{\beta \in \calS_２+ [k]} \psi(\beta)
+		\bm{e}\left( \frac{Nc}{k} \beta^2 \right) C(\beta)
+		\sum_{\alpha \in \calT} \chi(\alpha) \alpha
+		\sum_{m \in \Z/k\Z}
+		\bm{e}\left( \frac{M}{k} (a (m + \alpha)^2 + 2N\beta b (m + \alpha) ) \right)
+	\end{align}
+	と変形できる. 
+	ここで$ m $に関する和は$ \alpha $によらないことが$ w_3, w_4 \in \{ \pm 1 \} $のときは\cref{rem:G(q)_calS_property} \cref{item:rem:G(q)_calS_rep_Seifert}より$ \calT \subset 1/2 + \Z $であることから, そうでないときは\cref{rem:G(q)_calS_property} \cref{item:rem:G(q)_calS_subset}と\cref{lem:Gauss_sum_indep} \cref{item:rem:G(q)_calS_zero_alpha}から従うので一つ目の式が$ 0 $であることが分かる. 
+	同様に二つ目の式も$ 0 $である.
+	
+	\cref{item:prop:Gauss_sum_vanish2}において, 一つ目の式は
+	\begin{align}
+		&\sum_{\beta \in \calS_２+ [k]} \psi(\beta) C(\beta)
+		\sum_{n \in \Z/2kN\Z} \bm{e}\left( \frac{an^2}{4kN} + \frac{\beta n}{k} \right) \\
+		&\sum_{\alpha \in \calT + [k]} \chi(\alpha) B(\alpha) 
+		\sum_{m \in \Z/2M\Z} \bm{e}\left( \frac{kcm^2}{4M} - \frac{1}{2}bmn + \alpha m \right)
+	\end{align}
+	と書ける. 
+	この式の2行目の$ m $にわたる二重和は, Gauss和の相互則（\cref{prop:reciprocity}）より
+	\begin{align}
+		&\frac{2M\iu}{\sqrt{kc}}
+		\sum_{m \in \Z/kc\Z} \bm{e} \left( -\frac{M}{kc} \left( m + \alpha - \frac{bn}{2} \right)^2 \right)
+	\end{align}
+	と書き直すことができる. 
+	これは\cref{lem:Gauss_sum_indep}より$ \alpha \in \calT + [k] $によらないので, \cref{eq:B_vanish}より\cref{item:prop:Gauss_sum_vanish2}の一つ目の式は$ 0 $である.
+	同様に二つ目の式も$ 0 $である.
+\end{proof}
+
+% --------------------------------------------------------------------------
+
+\subsection{重み付きGauss和の基底変換不変性} \label{subsec:Gauss_sum_base_change}
+
+% --------------------------------------------------------------------------
+
+WRT不変量の量子モジュラー性を示すには冪根への極限がWRT不変量に収束するような無限級数を準備する必要があるが, 二次形式$ Q(m, n) $が不定値の場合には無限級数の収束性のために$ \Z^2 $に基底変換を施す必要がある. 
+そのためにここでは重み付きGauss和が基底変換で定数倍を除いて不変であることを示す. 
+
+\begin{prop} \label{prop:Gauss_sum_base_change}
+	\cref{prop:Gauss_sum_vanish}の設定と仮定の下で, $ \Z^2 $の任意の基底$ \lambda = {}^t\!(\mu, \nu), \lambda' = {}^t\!(\mu', \nu') \in \Z^2 $に対し
+	\begin{align}
+		&\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS} 
+		\veps(\gamma)
+		\sum_{l = {}^t\!(m, n) \in [k] \lambda \oplus [k] \lambda'}
+		\bm{e}\left( \frac{1}{k} Q(\gamma + l) \right) mn
+		\\			
+		= \,
+		&(\mu \nu' + \nu \mu')
+		\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS} 
+		\veps(\gamma)
+		\sum_{m, n \in [k]}
+		\bm{e}\left( \frac{1}{k} Q(\gamma + m \lambda + n \lambda') \right) mn
+		\\			
+		= \,
+		&(\mu \nu' + \nu \mu')
+		\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS} 
+		\veps(\gamma)
+		\sum_{l = {}^t\!(m, n) \in [k]^2}
+		\bm{e}\left( \frac{1}{k} Q(\gamma + l) \right) mn.
+	\end{align}
+\end{prop}
+
+\begin{rem}
+	\cref{prop:Gauss_sum_base_change}の状況で$ \mu \nu' + \nu \mu' \neq 0 $である. 
+	実際もし$ \mu \nu' + \nu \mu' = 0 $だとすると$ \mu \nu' - \nu \mu' = \pm 1 $より$ 2\mu \nu' = \pm 1 $となり矛盾する. 
+\end{rem}
+
+\begin{proof}[$ \cref{prop:Gauss_sum_base_change} $の証明]
+	一つ目の等式は
+	\begin{align}
+		&\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS} 
+		\veps(\gamma)
+		\sum_{l = {}^t\!(m, n) \in [k] \lambda \oplus [k] \lambda'}
+		\bm{e}\left( \frac{1}{k} Q(\gamma + l) \right) mn
+		\\			
+		= \,
+		&\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS} 
+		\veps(\gamma)
+		\sum_{m, n \in [k]}
+		\bm{e}\left( \frac{1}{k} Q(\gamma + m \lambda + n \lambda') \right) (m \mu + n \mu')(m \nu + n \nu')
+	\end{align}
+	と書けることと\cref{prop:Gauss_sum_vanish} \cref{item:prop:Gauss_sum_vanish1}から従う. 
+	二つ目の等式を示すには
+	\begin{align} \label{eq:Gauss_sum_base_change}
+		&\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS} 
+		\veps(\gamma)
+		\sum_{m, n \in [k]}
+		\bm{e}\left( \frac{1}{k} Q(\gamma + m \lambda + n \lambda') \right) mn
+	\end{align}
+	が$ \Z^2 $の基底$ \lambda, \lambda' \in \Z^2 $によらないことを示せば良い. 
+	これは行列の基本変形を考えることにより$ \lambda \mapsto \lambda', \lambda' \mapsto \lambda $という変換と
+	$ \lambda \mapsto \lambda, \lambda' \mapsto \lambda + \lambda' $という変換で\cref{eq:Gauss_sum_base_change}が不変であることを示せば良い. 
+	前者は自明である. 
+	後者を示す. 
+	\cref{eq:Gauss_sum_base_change}は
+	\begin{align}
+		&\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS} 
+		\veps(\gamma)
+		\sum_{n \in [k]} n
+		\left( \sum_{0 \le m < k-n} (m+n) + \sum_{k-n \le m < k} (m+n-k) \right)
+		\bm{e}\left( \frac{1}{k} Q(\gamma + (m+n) \lambda + n \lambda') \right)
+		\\
+		= \,
+		&\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS} 
+		\veps(\gamma)
+		\sum_{n \in [k]} n
+		\left( \sum_{m \in [k]} (m+n) - kn \right)
+		\bm{e}\left( \frac{1}{k} Q(\gamma + m \lambda + n \lambda') \right)
+	\end{align}
+	と変形できるが, これは\cref{prop:Gauss_sum_vanish} \cref{item:prop:Gauss_sum_vanish1}より
+	\begin{align}
+		&\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS} 
+		\veps(\gamma)
+		\sum_{m, n \in [k]}
+		\bm{e}\left( \frac{1}{k} Q(\gamma + m \lambda + n (\lambda +\lambda')) \right) mn
+	\end{align}
+	に等しい. 
+\end{proof}
+
+% --------------------------------------------------------------------------
+
+\section{WRT不変量の表示式} \label{sec:WRT}
+
+% --------------------------------------------------------------------------
+
+本節では$ M(\Gamma) $に対するWRT不変量の重み付きGauss和による以下の表示式を証明する. 
+
+\begin{prop} \label{prop:WRT_rep_Bernoulli}
+	\begin{align}
+		\WRT_k(M(\Gamma)) 
+		= \,
+		&\zeta_{4k}^{3\sigma_W - \sum_{i=1}^{6}w_{i} - \sum_{i=3}^{6} 1/w_{i}}
+		\bm{e}(\sigma'_W/8)
+		\\
+		&\frac{1}{2k^2 (\zeta_{2k}-\zeta_{2k}^{-1})}
+		\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS} 
+		\veps(\gamma)
+		\sum_{l = {}^t\!(m, n) \in [k]^2}
+		\bm{e}\left( \frac{1}{k} Q(\gamma + l) \right) mn.
+	\end{align}
+	ただし
+	\[
+	\sigma'_W
+	:=
+	\sigma_W  - \sigma_S + \sgn(w_3) + \sgn(w_4) +\sgn(w_5) + \sgn(w_6).
+	\]
+\end{prop}
+
+証明のためにまず次の表示式を求める. 
+
+\begin{prop} \label{prop:WRT_first_calculation}
+	\begin{align}
+		&\WRT_k(M(\Gamma)) 
+		\\
+		= \, &\frac{\zeta_{4k}^{3\sigma_W - \sum_{i=1}^{6}w_{i} - \sum_{i=3}^{6} 1/w_{i}} 
+			\bm{e}((\sigma_W + \sgn(w_3) + \sgn(w_4) +\sgn(w_5) + \sgn(w_6))/8)}
+		{4k (\zeta_{2k}-\zeta_{2k}^{-1}) \sqrt{\abs{MN}}}
+		\\
+		&\sum_{l = {}^t\!(m, n) \in (\Z \smallsetminus k\Z)^2/2kS(\Z^2)}
+		\bm{e} \left( -\frac{1}{4k} {}^t\!l S^{-1} l \right)
+		G(\zeta_{2Mk}^{m}) H(\zeta_{2Nk}^{n}).
+	\end{align}
+\end{prop}
+
+\begin{proof}%[$ \cref{prop:WRT_first_calculation} $の証明]
+	証明の方針は一般のplumbedの場合の\cite[命題3.2]{Mura}と同じだが, 本稿ではグラフの隣接行列が負定値とは限らない場合も扱うため行う計算には若干の差異がある. 
+	
+	\cite[Equation A.12]{GPPV}による以下の表示式から証明を出発する. 
+	\begin{align} \label{eqn:WRT}
+		\WRT_k(M(\Gamma))
+		=
+		\frac{\bm{e}(\sigma_W/8) \zeta_{4k}^{3\sigma_W - w_1 - \cdots w_6}}
+		{2 \sqrt{2k}^6 (\zeta_{2k} - \zeta_{2k}^{-1})}
+		\sum_{l \in (\Z \smallsetminus kZ)^6/2k\Z^6} \zeta_{4k}^{{}^t\!l W l}
+		\prod_{1 \le i \le 6} \left( \zeta_{2k}^{l_v} - \zeta_{2k}^{-l_v} \right)^{2-\deg(i)}.
+	\end{align}	
+
+	まず, $ 3 \le i \le 6, \, l_i \in k\Z $に対し$ \zeta_{2k}^{l_i} - \zeta_{2k}^{-l_i} = 0 $が成り立つので
+	\begin{equation} \label{eq:WRT_Gauss_sum} 
+		\begin{aligned}
+			&\sum_{l \in (\Z \smallsetminus kZ)^6/2k\Z^6} \zeta_{4k}^{{}^t\!l W l}
+			\prod_{1 \le i \le 6} \left( \zeta_{2k}^{l_i} - \zeta_{2k}^{-l_i} \right)^{2-\deg(i)} \\
+			= \,
+			&\sum_{l \in \left( (\Z \smallsetminus k\Z) / 2k\Z \right)^{2} \oplus (\Z/ 2k \Z)^{4}} 
+			\zeta_{4k}^{{}^t\!l W l}
+			\prod_{1 \le i \le 6} \left( \zeta_{2k}^{l_i} - \zeta_{2k}^{-l_i} \right)^{2-\deg(i)}
+		\end{aligned}
+	\end{equation}
+	と書けることに注意する. 
+	ここで
+	\begin{align}
+		\prod_{3 \le j \le 6} \left( \zeta_{2k}^{l_j} - \zeta_{2k}^{-l_j} \right)
+		&= 
+		\prod_{3 \le j \le 6} \sum_{e_j \in \{ \pm 1 \} } e_j \zeta_{2k}^{e_j l_j}
+	\end{align}
+	と変形できることと, $ l \in \Z^6 $に対し
+	\[
+	{}^t\!l W l
+	= w_1 l_1^2 + 2 l_1 l_2 + w_2 l_2^2 + \sum_{i \in \{ 1, 2\}} \sum_{j \in \{ 2i+1, 2i+2 \}} \left( w_j l_j^2 + 2 l_i l_j \right)
+	\]
+	が成り立つことから, \cref{eq:WRT_Gauss_sum}の右辺は
+	\begin{align}
+		\sum_{l_1, l_2 \in (\Z \smallsetminus k\Z) / 2k\Z}
+		\zeta_{4k}^{w_1 l_1^2 + 2 l_1 l_2 + w_2 l_2^2}
+		\prod_{i \in \{ 1, 2\}}
+		&\frac{1}{\left( \zeta_{2k}^{l_v} - \zeta_{2k}^{-l_v} \right)}
+		\\
+		&\prod_{j \in \{ 2i+1, 2i+2 \}} \sum_{e_j \in \{ \pm 1 \} } e_j
+		\sum_{l_j \in \Z/ 2k \Z}
+		\zeta_{4k}^{w_j l_j^2 + 2 (l_i + e_j) l_j}
+	\end{align}
+	と書ける. 
+	この式の最後の$ l_j $に関する和は, Gauss和の相互則（\cref{prop:reciprocity}）より
+	\[	
+	\frac{\bm{e}(\sgn(w_j)/8) \sqrt{2k}}{\sqrt{\abs{w_i}}}
+	\sum_{l_j \in \Z/ w_j \Z}
+	\zeta_{4k w_j}^{ -\left( 2k l_j + l_i + e_j \right)^2 }
+	\]
+	に等しいので, \cref{eq:WRT_Gauss_sum}の右辺は
+	\begin{equation} \label{eq:WRT_Gauss_sum2}
+		\begin{aligned}
+			&\frac{4k^2 \bm{e}((\sgn(w_3) + \sgn(w_4) +\sgn(w_5) + \sgn(w_6))/8)}{\sqrt{\abs{MN}}}
+			\sum_{l_1, l_2 \in (\Z \smallsetminus k\Z) / 2k\Z}
+			\zeta_{4k}^{w_1 l_1^2 + 2 l_1 l_2 + w_2 l_2^2}
+			\\
+			&\prod_{i \in \{ 1, 2\}}
+			\frac{1}{\left( \zeta_{2k}^{l_i} - \zeta_{2k}^{-l_i} \right)}
+			\prod_{j \in \{ 2i+1, 2i+2 \}} \sum_{e_j \in \{ \pm 1 \} } e_j
+			\sum_{l_j \in \Z/ w_j \Z}
+			\zeta_{4k w_j}^{ -\left( 2k l_j + l_i + e_j \right)^2 }
+		\end{aligned}
+	\end{equation}	
+	と変形できる. 
+	ここで$ i \in \{ 1, 2 \} $に対し\cref{rem:veps_property} \cref{item:rem:veps_property1}より$ \gcd(w_{2i+1}, w_{2i+2}) = 1 $なので, 中国剰余定理から
+	\begin{align}
+		&\prod_{j \in \{ 2i+1, 2i+2 \}} \sum_{e_j \in \{ \pm 1 \} } e_j
+		\sum_{l_j \in \Z/ w_j \Z}
+		\zeta_{4k w_j}^{ -\left( 2k l_j + l_i + e_j \right)^2 } \\
+		= \,
+		&\prod_{j \in \{ 2i+1, 2i+2 \}} \sum_{e_j \in \{ \pm 1 \} } e_j
+		\sum_{l'_i \in \Z/ w_{2i+1} w_{2i+2} \Z}
+		\zeta_{4k w_j}^{ -\left( 2k l'_i + l_i + e_j \right)^2 }		
+	\end{align}
+	と書ける. 
+	ここで$ 2k l'_i + l_i $を改めて$ l_i $とおくと, \cref{rem:S} \cref{item:rem:S4}を用いることで\cref{eq:WRT_Gauss_sum2}の$ l_1, l_2 $に関する和以降の式は
+	\begin{align}
+		&\sum_{(l_1, l_2) \in (\Z \smallsetminus k\Z)^2 / 2k S(\Z)^2}
+		\zeta_{4k}^{w_1 l_1^2 + 2 l_1 l_2 + w_2 l_2^2}
+		\prod_{i \in \{ 1, 2\}}
+		\frac{1}{\left( \zeta_{2k}^{l_i} - \zeta_{2k}^{-l_i} \right)}
+		\prod_{j \in \{ 2i+1, 2i+2 \}} \sum_{e_j \in \{ \pm 1 \} } e_j
+		\zeta_{4k w_j}^{ -\left( l_i + e_j \right)^2 }\\
+		= \,
+		&\sum_{(l_1, l_2) \in (\Z \smallsetminus k\Z)^2 / 2k S(\Z)^2}
+		\bm{e} \left( 
+		\frac{1}{4k} \left( 
+		w_1 l_1^2 + 2 l_1 l_2 + w_2 l_2^2
+		- \left( \frac{1}{w_3} + \frac{1}{w_4} \right) l_1
+		- \left( \frac{1}{w_5} + \frac{1}{w_6} \right) l_2
+		\right) \right)
+		\\
+		&\prod_{i \in \{ 1, 2\}}
+		\frac{1}{\left( \zeta_{2k}^{l_i} - \zeta_{2k}^{-l_i} \right)}
+		\prod_{j \in \{ 2i+1, 2i+2 \}} \sum_{e_j \in \{ \pm 1 \} } e_j
+		\zeta_{4k w_j}^{ -2 e_j l_i - e_j^2 } 
+%		\\
+%		= \,
+%		&\zeta_{4k}^{-\sum_{i=3}^{6} 1/w_{i}}
+%		\sum_{(l_1, l_2) \in (\Z \smallsetminus k\Z)^2 / 2k S(\Z)^2}
+%		\bm{e} \left( 
+%		\frac{1}{4k} \left( 
+%		w_1 l_1^2 + 2 l_1 l_2 + w_2 l_2^2
+%		- \left( \frac{1}{w_3} + \frac{1}{w_4} \right) l_1
+%		- \left( \frac{1}{w_5} + \frac{1}{w_6} \right) l_2
+%		\right) \right)
+%		G(\zeta_{2Mk}^{l_1}) H(\zeta_{2Nk}^{l_2}).
+	\end{align}
+	と変形できる. 
+	ここで
+	\[
+	w_1 l_1^2 + 2 l_1 l_2 + w_2 l_2^2
+	- \left( \frac{1}{w_3} + \frac{1}{w_4} \right) l_1
+	- \left( \frac{1}{w_5} + \frac{1}{w_6} \right) l_2
+	=
+	-(l_1, l_2) S^{-1} \pmat{l_1 \\ l_2}
+	\]
+	が成り立つことと$ G(q), H(q) $の定義から主張を得る. 
+\end{proof}
+
+\cref{prop:WRT_rep_Bernoulli}は重み付きGauss和の消滅性を用いて\cref{prop:WRT_first_calculation}からさらに計算を進めることによって得られる. 
+
+\begin{proof}[$ \cref{prop:WRT_rep_Bernoulli} $の証明]
+	証明の方針は$ W $が負定値の場合を扱っている\cite[Proposition 6.5]{MM}と同じだが, 符号の部分の差異があるため改めて丁寧に与えておこう. 
+	
+	\cref{prop:WRT_first_calculation}において$ m \in \Z \smallsetminus k\Z $に対し$ G(\zeta_{2Mk}^{m}) $という項が現れるが, \cref{item:rem:G(q)_calS_expansion}よりこの項について
+	\begin{align}
+		G(\zeta_{2Mk}^{m} e^{-t/2M})
+		&=
+		-\sum_{\alpha \in \calT + \Z_{\ge 0}} \chi(\alpha)
+		\bm{e} \left( \frac{1}{k} m \alpha \right) e^{-t\alpha}
+		\\
+		&=
+		-\sum_{\alpha \in \calT + [k]} \chi(\alpha)
+		\bm{e} \left( \frac{1}{k} m \alpha \right)
+		\sum_{l=0}^{\infty} e^{-t(\alpha + kl)}
+		\\
+		&=
+		-\sum_{\alpha \in \calT + [k]} \chi(\alpha)
+		\bm{e} \left( \frac{1}{k} m \alpha \right)
+		\frac{e^{-\alpha t}}{1 - e^{-kt}}
+	\end{align}
+	と書ける. 
+	ここでBernoulli多項式の母関数は
+	\[
+	\frac{t e^{xt}}{e^t - 1} = \sum_{i=0}^{\infty} \frac{B_i(x)}{i!} t^i
+	\]
+	で与えられるので
+	\begin{align}
+		G(\zeta_{2Mk}^{m} e^{-t/2M})
+		&=
+		-\sum_{\alpha \in \calT + [k]} \chi(\alpha)
+		\bm{e} \left( \frac{1}{k} m \alpha \right)
+		\sum_{i = -1}^\infty \frac{B_{i+1}\left( \alpha/k \right)}{(i+1)!} (-kt)^{i}
+	\end{align}
+	を得る. 
+	ここで$ m \in \Z \smallsetminus k\Z $より
+	\[
+	\sum_{\alpha \in \calT + [k]} \chi(\alpha)
+	\bm{e} \left( \frac{1}{k} m \alpha \right)
+	=
+	\sum_{\alpha \in \calT} \chi(\alpha)
+	\bm{e} \left( \frac{1}{k} m \alpha \right)
+	\sum_{l \in \Z/k\Z} \bm{e} \left( \frac{1}{k} ml \right)
+	= 0
+	\]
+	である（この事実は$ G(\zeta_{2Mk}^{m} e^{-t/2M}) $は$ t = 0 $で正則な有理型関数であるため$ t^{-1} $の項の係数が消えることからも従う）. 
+	よって
+	\begin{align}
+		G(\zeta_{2Mk}^{m})
+		&=
+		-\sum_{\alpha \in \calT + [k]} \chi(\alpha)
+		\bm{e} \left( \frac{1}{k} m \alpha \right)
+		B_{1}\left( \frac{\alpha}{k} \right)
+		\\
+		&=
+		\frac{1}{k}
+		\sum_{\alpha \in \calT + [k]} \chi(\alpha)
+		\bm{e} \left( \frac{1}{k} m \alpha \right)
+		\alpha
+	\end{align}
+	が従う. 
+	同様に, $ n \in \Z \smallsetminus k\Z $に対し$ H(\zeta_{2Nk}^{n}) $は
+	\begin{align}
+		H(\zeta_{2Nk}^{n})
+		=
+		\frac{1}{k}
+		\sum_{\beta \in \calU + [k]} \psi(\beta)
+		\bm{e} \left( \frac{1}{k} n \beta \right)
+		\beta
+	\end{align}
+	と書ける. 
+	以上より
+	\begin{equation} \label{eq:Gauss_sum_missed}
+		\begin{aligned}
+			&\sum_{l = {}^t\!(m, n) \in (\Z \smallsetminus k\Z)^2/2kS(\Z^2)}
+			\bm{e} \left( -\frac{1}{4k} {}^t\!l S^{-1} l \right)
+			G^\omega(\zeta_k^{m/2M}) G^\varpi(\zeta_k^{n/2N}) \\
+			= \,
+			&\frac{1}{k^2}
+			\sum_{l = {}^t\!(m, n) \in (\Z \smallsetminus k\Z)^2/2kS(\Z^2)}
+			\bm{e} \left( -\frac{1}{4k} {}^t\!l S^{-1} l \right)
+			\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS + [k]^2}
+			\veps(\gamma) \bm{e}\left( \frac{1}{k} {}^t\!\gamma l \right)
+			\alpha \beta
+		\end{aligned}		
+	\end{equation}
+	を得る. 	
+	ここで\cref{item:rem:G(q)_calS_zero,item:rem:G(q)_calS_zero_alpha}より
+	\begin{align}
+		\sum_{\alpha \in \calT + [k]} \chi(\alpha) \alpha
+		= \,
+		&\sum_{\alpha \in \calT} \chi(\alpha) \left( k\alpha + \frac{1}{2}k(k-1) \right) \\
+		= \,
+		&k \sum_{\alpha \in \calT} \chi(\alpha) \alpha \\
+		= \,
+		&0.
+	\end{align}
+	同様に
+	\[
+	\sum_{\beta \in \calU + [k]} \psi(\beta) \beta
+	= 0.
+	\]
+	よって\cref{prop:Gauss_sum_vanish} \cref{item:prop:Gauss_sum_vanish2}より\cref{eq:Gauss_sum_missed}の右辺は
+	\begin{align} 
+		\frac{1}{k^2}
+		\sum_{l = {}^t\!(m, n) \in \Z^2/2kS(\Z^2)}
+		\bm{e} \left( -\frac{1}{4k} {}^t\!l S^{-1} l \right)
+		\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS + [k]^2}
+		\veps(\gamma) \bm{e}\left( \frac{1}{k} {}^t\!\gamma l \right)
+		\alpha \beta
+	\end{align}
+	と書ける. 
+	この式は$ l $を$ l + 2S\gamma $で置き換えることで
+	\begin{align} 
+		\frac{1}{k^2} G(2kS)
+		\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS + [k]^2}
+		\veps(\gamma) \bm{e}\left( \frac{1}{k} Q(\gamma) \right)
+		\alpha \beta
+	\end{align}
+	に等しい.
+	ただしここで
+	\[
+	G(2kS) :=
+	\sum_{l \in \Z^2/2kS(\Z^2)}
+	\bm{e} \left( -\frac{1}{2} {}^t\!l (2kS)^{-1} l \right)
+	\]
+	とおいた. 
+	Gauss和の相互則（\cref{prop:reciprocity}）より$ G(2kS) = 2k \bm{e} (-\sigma_S/8) \sqrt{\abs{MN}} $であり, また\cref{prop:Gauss_sum_vanish} \cref{item:prop:Gauss_sum_vanish1}より
+	\begin{align} 
+		\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS + [k]^2}
+		\veps(\gamma) \bm{e}\left( \frac{1}{k} Q(\gamma) \right)
+		\alpha \beta
+		&=
+		\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS} 
+		\veps(\gamma)
+		\sum_{l = {}^t\!(m, n) \in [k]^2}
+		\bm{e}\left( \frac{1}{k} Q(\gamma + l) \right) (\alpha + m)(\beta + n)
+		\\
+		&=
+		\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS} 
+		\veps(\gamma)
+		\sum_{l = {}^t\!(m, n) \in [k]^2}
+		\bm{e}\left( \frac{1}{k} Q(\gamma + l) \right) mn
+	\end{align}
+	なので主張を得る. 
+\end{proof}
+
+% --------------------------------------------------------------------------
+
+\section{漸近展開の公式} \label{sec:asymptotic_formula}
+
+% --------------------------------------------------------------------------
+
+WRT不変量を極限値に持つような無限級数を計算するために, 本節では和の添字集合が錐となる無限級数の漸近展開を与えることにしよう. 
+次の命題を示すことが本節の目的である. 
+
+\begin{prop} \label{prop:infin_series_asymptotic}
+	\begin{itemize}
+		\item $ \lambda = {}^t\!(\mu, \nu), \lambda' = {}^t\!(\mu', \nu') \in \Z^2 $: $ \Z^2 $の基底, 
+		\item $ \delta \in \R^2 $,
+		\item $ f \colon \R^2 \to \bbC $: 急減少$ C^\infty $級, $ f(0) = 1 $
+	\end{itemize}
+	に対し
+	\begin{align}
+		&\lim_{t \to +0} 
+		\sum_{\gamma \in \calS + (\Z_{\ge 0} \lambda \oplus \Z_{\ge 0} \lambda')} 
+		\veps(\gamma)
+		\bm{e} \left( \frac{1}{k} Q(\gamma) \right)
+		f(t(\gamma + \delta))
+		\\
+		= \,
+		&\frac{\perm{(\lambda, \lambda')}}{k^2}
+		\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS} 
+		\veps(\gamma)
+		\sum_{l = {}^t\!(m, n) \in [k]^2}
+		\bm{e}\left( \frac{1}{k} Q(\gamma + l) \right) mn
+	\end{align}
+	が成り立つ. 
+	ただし$ \perm{(\lambda, \lambda')} := \mu \nu' + \nu \mu' $は行列$ (\lambda, \lambda') \in \GL_2(\Z) $の\textbf{permanent}（permutation + determinantのかばん語. 日本語の定訳は無い. 中国語では「積和式」と呼ばれる）である. 
+\end{prop}
+
+証明には次のEuler-Maclaurinの和公式から従う漸近展開を用いる. 
+
+\begin{lem}[{\cite[Equation (2.8)]{BKM}, \cite[Lemma 2.2]{BMM}}] \label{lem:Euler-Maclaurin}	
+	\begin{itemize}
+		\item $ \alpha, \beta \in \R$,
+		\item $ f \colon \R^2 \to \bbC $: $ C^\infty $級な急減少関数
+	\end{itemize}
+	に対し$ t \to +0 $に関する漸近評価
+	\[
+	\sum_{m, n = 0}^{\infty} f(t(m+\alpha, n+\beta))
+	\sim \sum_{i, j = -1}^{\infty} \frac{B_{i+1}(\alpha)}{(i+1)!} \frac{B_{j+1}(\beta)}{(j+1)!}
+	\frac{\partial^{i+j} f}{\partial x^i \partial y^j} (0, 0) t^{i+j}
+	\]
+	が成り立つ. 
+	ただし
+	\begin{align}
+		\frac{\partial^{i+j} }{\partial x^i \partial y^j} f := \frac{\partial^{i}}{\partial x^i} \frac{\partial^{j}}{\partial y^j} f, \quad
+		\frac{\partial^{-1} f}{\partial x^{-1}} (x', y) := -\int_{x'}^\infty f(0, y) dx
+	\end{align}
+	と定義する. 
+\end{lem}
+
+\begin{proof}[$ \cref{prop:infin_series_asymptotic} $の証明]
+	\cref{lem:Euler-Maclaurin}より
+	\begin{align}
+		&\sum_{\gamma \in \calS + (\Z_{\ge 0} \lambda \oplus \Z_{\ge 0} \lambda')} 
+		\veps(\gamma)
+		\bm{e} \left( \frac{1}{k} Q(\gamma) \right)
+		f(t(\gamma + \delta))
+		\\
+		= \,
+		&\sum_{\gamma \in \calS + ([k] \lambda \oplus [k] \lambda')} 
+		\veps(\gamma)
+		\bm{e} \left( \frac{1}{k} Q(\gamma) \right)
+		\sum_{m, n \in \Z_{\ge 0}}
+		f(t(\gamma + \delta + km \lambda + kn \lambda))
+		\\
+		\sim \,
+		&\sum_{\gamma = \alpha \lambda + \beta \lambda' \in \calS + ([k] \lambda \oplus [k] \lambda')} 
+		\veps(\gamma)
+		\bm{e} \left( \frac{1}{k} Q(\gamma) \right)
+		\\
+		&\sum_{i, j = -1}^{\infty} \frac{B_{i+1}((\alpha + \delta_1)/k)}{(i+1)!} \frac{B_{j+1}((\beta + \delta_2)/k)}{(j+1)!}
+		\restrict{\frac{\partial^{i+j} }{\partial x^i \partial y^j} f(x \lambda + y \lambda')}{x=y=0} (kt)^{i+j}
+	\end{align}
+	と書ける.
+	ただし$ \delta $の第一, 第二成分をそれぞれ$ \delta_1, \delta_2'$とおいた. 
+	よって\cref{prop:Gauss_sum_vanish} \cref{item:prop:Gauss_sum_vanish1}より
+	\begin{align}
+		&\lim_{t \to +0} 
+		\sum_{\gamma \in \calS + (\Z_{\ge 0} \lambda \oplus \Z_{\ge 0} \lambda')} 
+		\veps(\gamma)
+		\bm{e} \left( \frac{1}{k} Q(\gamma) \right)
+		f(t(\gamma + \delta))
+		\\
+		= \,
+		&\sum_{\gamma = \alpha \lambda + \beta \lambda' \in \calS + ([k] \lambda \oplus [k] \lambda')} 
+		\veps(\gamma)
+		\bm{e} \left( \frac{1}{k} Q(\gamma) \right)
+		\frac{\alpha \beta}{k^2}
+		\\
+		= \,
+		&\frac{1}{k^2}
+		\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS} 
+		\veps(\gamma)
+		\sum_{l = {}^t\!(m, n) \in [k] \lambda \oplus [k] \lambda'}
+		\bm{e}\left( \frac{1}{k} Q(\gamma + l) \right) mn
+	\end{align}
+	を得る. 
+	\cref{prop:Gauss_sum_base_change}よりこれは主張の右辺に等しい. 
+\end{proof}
+
+% --------------------------------------------------------------------------
+
+\section{Zwegersの不定値テータ関数} \label{sec:Zwegers_theta}
+
+% --------------------------------------------------------------------------
+
+% --------------------------------------------------------------------------
+
+\subsection{不定値テータ関数の冪根での極限値} \label{subsec:indef_theta_limit}
+
+% --------------------------------------------------------------------------
+
+\cref{sec:WRT}でWRT不変量を重み付きGauss和で表示した.
+この重み付きGauss和を冪根での極限値に持つような無限級数について考察しよう. 
+
+二次形式$ Q(m, n) $が正定値の場合に重み付きGauss和が\ruby{偽}{フォルス}テータ関数の漸近展開として表せることは\cite{MM}で調べたが, $ Q(m, n) $が不定値の場合はそのような関数の存在は知られていない. 
+%本項ではどのような関数を取り得るかについて考察する. 
+そのような関数の候補としてまず初めに考えられるのがHeckeの不定値テータ関数である. 
+正確な定義は述べないが, これは今の場合
+\begin{align}
+	\vartheta_Q (\tau) 
+	&:=
+	\sum_{l = {}^t\!(m, n) \in \Z^2 / \SL_2(\Z)_Q, \, Q(l) > 0} \sgn_0(m) q^{Q(l)}, 
+	\\
+	\vartheta_Q^* (\tau)
+	&:=
+	\sum_{l = {}^t\!(m, n) \in \Z^2 / \SL_2(\Z)_Q} \sgn_0(m) q^{\abs{Q(l)}}
+\end{align}
+のように定義されるものである. 
+そこでこれら関数の$ \tau \to 1/k $での極限値や漸近展開を調べることを考えたいが, 和の添字に現れる$ l $が$ \Z_{\ge 0}^2 $のような分かりやすい集合（ベクトル空間内の錐）の形をしていないために極限値や漸近展開を調べることができず, Euler-Maclaurinの和公式（\cref{lem:Euler-Maclaurin}）を適用することができない.
+どのように極限値や漸近展開を調べるかを考えるのも面白いことのように思われるが, ここでは諦めることにして, 代わりにZwegersの不定値テータ関数（\cref{sec:Zwegers_theta}）を考えることにする. 
+Zwegersの不定値テータ関数は和の添字集合が錐となっているため極限値や漸近展開を調べることが出来るのである. 
+
+% --------------------------------------------------------------------------
+
+\subsection{Zwegersの不定値テータ関数の定義と\ruby{擬}{モック}モジュラー性} \label{subsec:Zwegers_theta_def}
+
+% --------------------------------------------------------------------------
+
+%前節までに行った考察により, 二次形式$ Q(m, n) $が不定値の場合にはWRT不変量を冪根への極限値に持つ級数としてZwegersの不定値テータ関数が候補に挙げられることが分かった. 
+%本節ではこのことを確かめる. 
+
+まずZwegersの不定値テータ関数の定義を述べる. 
+なお本稿では二変数二次形式のみ扱うこととする. 
+本節を通して以下の記号を固定する. 
+
+\begin{symb}
+	不定値対称行列$ S \in \Sym_2(\Z) $.
+\end{symb}
+
+これに対し次の記法を定めておく. 
+
+\begin{dfn}
+	不定値二次形式$ Q(l) := {}^t\!l S l /2, \, l \in \Z^2 $.
+\end{dfn}
+
+このときZwegersの不定値テータ関数は以下のように定義される. 
+
+\begin{dfn}[{\cite[Equation 8.23]{BFOR}, Zwegers~\cite[Section 2.2]{Zwegers_thesis}}]
+	\label{dfn:Zwegers_theta}
+	\leavevmode %強制的な改行
+	\begin{itemize}
+		\item 不定値対称行列$ S \in \Sym_2(\Z) $,
+		\item 不定値二次形式$ Q(n) := {}^t\!n S n, \, n \in \Z^2 $,
+		\item ベクトル$ \lambda, \lambda' \in \R^2 $であって$ Q(\lambda), Q(\lambda'), {}^t\!\lambda S \lambda' < 0 $なるもの,
+		\item ベクトル$ \gamma, \delta \in \R^2 $,
+		\item ベクトル$ z = \gamma \tau + \delta \in \bbC^2 $
+	\end{itemize}
+	に対し
+	\begin{align}
+		\vartheta_{S, \lambda, \lambda'} \left( z; \tau \right)
+		&:=
+		\sum_{l \in \Z^2}
+		\left(\sgn_0 \left( {}^t\!\lambda S (\gamma + l) \right) - \sgn_0( {}^t\!\lambda' S (\gamma + l) ) \right)
+		\bm{e} \left( {}^t\!z S l \right) q^{Q(l)/2}
+		\\
+		&=
+		\bm{e} \left( -{}^t\!\gamma S \delta \right) q^{-Q(\gamma)/2}		
+		\sum_{l \in \gamma + \Z^2}
+		\left(\sgn_0( {}^t\!\lambda S l ) - \sgn_0( {}^t\!\lambda' S l ) \right)
+		\bm{e} \left( {}^t\!\delta S l \right) q^{Q(l)/2}
+	\end{align}
+	とおき, これを\textbf{Zwegersの不定値テータ関数}と呼ぶ. 
+\end{dfn}
+
+\begin{thm}[{\cite[Theorem 8.26]{BFOR}, Zwegers~\cite[Proposition 2.4]{Zwegers_thesis}}]
+	Zwegersの不定値テータ関数を定める無限級数は収束する. 
+\end{thm}
+
+このように定義されたZwegersの不定値テータ関数は\cref{prop:infin_series_asymptotic}で極限値を計算した無限級数のような表示をしていないが, 次節でそのような表示に書き直す. 
+ここではその前にZwegersの不定値テータ関数が持つ最も重要な性質である\ruby{擬}{モック}モジュラー性について見ていくことにする. 
+それは次のように定式化される. 
+
+\begin{thm}[{\cite[Theorem 8.30]{BFOR}}]
+	\cref{dfn:Zwegers_theta}の設定下で$ \lambda, \lambda' \in \Z^2 $であり, それらの各成分は互いに素だと仮定する. 
+	このとき$ \vartheta_{S, \lambda, \lambda'} \left( z; \tau \right) $は重さ$ 1 $のベクトル値混合\ruby{擬}{モック}モジュラー形式 (vector-valued mixed mock modular form) の成分となる. 
+	特に$ \vartheta_{S, \lambda, \lambda'} \left( z; \tau \right) $はある合同部分群$ \Gamma \subset \SL_2(\Z) $に関する重さ$ 1 $の混合\ruby{擬}{モック}モジュラー形式である. 
+\end{thm}
+
+ここで混合\ruby{擬}{モック}モジュラー形式は以下のように定義される概念である. 
+
+\begin{dfn}[{\cite[Definition 13.1]{BFOR}}]
+	\textbf{重さ$ k $の混合調和Maass形式}%, もしくは\textbf{深さ$ 2 $, 重さ$ k $の調和Maass形式}
+	とは有限和$ f_1(\tau) g_1(\tau) + \cdots + f_n(\tau) g_n(\tau) $で表される関数であって, 各$ f_i(\tau) $は重さ$ k_i $の弱正則モジュラー形式であり各$ g_i(\tau) $は重さ$ l_i $の制御可能増大度の調和Maass形式 (harmonic Maass form of manageable growth, \cite[Definition 4.1]{BFOR}) であり各$ 1 \le i \le n $に対し$ k_i + l_i = k $を満たすもののことである. 
+	重さ$ k $の混合調和Maass形式の正則部分を\textbf{混合\ruby{擬}{モック}モジュラー形式}と呼ぶ. 
+\end{dfn}
+
+ここで定義から次が成り立つ. 
+
+\begin{lem}
+	重さ$ k $の混合\ruby{擬}{モック}モジュラー形式の冪根への極限値は深さ$ 2 $の量子モジュラー形式を定める. 
+\end{lem}
+
+従って二次形式$ Q(m, n) $が不定値の場合には, WRT不変量をZwegersの不定値テータ関数の冪根への極限値として表すことが出来ればその量子モジュラー性が分かることになる（後に\cref{rem:Zwegers_lim}でこれは実現できそうにないことが分かる）. 
+このことを実行するために, 次項ではZwegersの不定値テータ関数の別表示を求める. 
+
+% --------------------------------------------------------------------------
+
+\subsection{Zwegersの不定値テータ関数の別表示} \label{subsec:Zwegers_theta_rep}
+
+% --------------------------------------------------------------------------
+
+それではZwegersの不定値テータ関数の別表示を与えよう. 
+ポイントは次の補題である. 
+
+\begin{lem} \label{lembasis_indef}
+	不定値対称行列$ S \in \Sym_2(\Z) $に対し$ \Z^2 $の元$ \lambda, \lambda' $と$ \Z^2 $の基底$ \widetilde{\lambda}, \widetilde{\lambda'} $であって
+	$ {}^t\!(\lambda, \lambda') S (\widetilde{\lambda}, \widetilde{\lambda'}) $が対角行列となり, 
+	$ Q(\lambda), Q(\lambda'), {}^t\!\lambda S \lambda' < 0 $なるものが存在する. 
+\end{lem}
+
+\begin{proof}
+	単因子論より行列$ P, \widetilde{P} \in \GL_2(\Z) $であってある整数$ M \mid N $について
+	\[
+	{}^t\!P S \widetilde{P}
+	= \pmat{M & 0 \\ 0 & N}
+	\]
+	を満たすものが存在する. 
+	ここで
+	\begin{align}
+		\pmat{1 & 0 \\ 1 & 1}
+		{}^t\!P S \widetilde{P}
+		\pmat{1 & 0 \\ -N/M & 1}
+		&=
+		\pmat{M & 0 \\ 0 & N}, 
+		\\
+		\pmat{0 & 1 \\ \pm 1 & 0}
+		{}^t\!P S \widetilde{P}
+		\pmat{0 & \pm 1 \\ 1 & 0}
+		&=
+		\pmat{M & 0 \\ 0 & N}
+	\end{align}
+	であり$ \GL_2(\Z) $は$ \pmat{1 & 0 \\ 1 & 1} $と$ \pmat{0 & 1 \\ \pm 1 & 0} $で生成されるので, 任意の$ \gamma \in \GL_2(\Z) $に対しある$ \delta \in \GL_2(\Z) $が存在し
+	$ {}^t\!(P \gamma) S \widetilde{P} \delta $が対角行列になるように出来る. 
+	よって, ある負の整数$ a, b, c $によって
+	\[
+	{}^t\!(P \gamma) S P \gamma
+	= \pmat{a & b \\ b & c}
+	\]
+	と書けるような$ \gamma \in \Gamma \cap \Mat_2(\Z) $が存在することを示せば,
+	$ (\lambda, \lambda') := P \gamma, \, (\widetilde{\lambda}, \widetilde{\lambda'}) := \widetilde{P} \delta $
+	とおくことで主張が従う. 
+	以下
+	\[
+	\pmat{a & b \\ b & c}
+	:= {}^t\!P S P
+	\]
+	とおく. 
+	
+	\textbf{Case 1}. $ a < 0 $のとき. 
+	もし$ c > 0 $なら
+	\[
+	\pmat{1 & 0 \\ n & 1} \pmat{a & b \\ b & c} \pmat{1 & n \\ 0 & 1}
+	=
+	\pmat{a & an + b \\ an + b & a n^2 + 2bn + c}
+	\]
+	と計算できるので適切な$ n \in \Z $を取ることで$ c < 0 $として良い. 
+	また
+	\[
+	\pmat{-1 & 0 \\ 0 & 1} \pmat{a & b \\ b & c} \pmat{-1 & 0 \\ 0 & 1}
+	=
+	\pmat{a & -b \\ -b & c}
+	\]
+	と計算できるので$ b < 0 $として良い. 
+	よってこの場合には主張が示された. 
+	
+	\textbf{Case 2}. $ a > 0 $のとき. 
+	Case 1より, ある$ \gamma = \pmat{ m & * \\ n & * } \in \SL_2(\Z) $が存在して$ a m^2 + 2b mn + c n^2 < 0 $を満たすことを示せば良い. 
+	ここで
+	\[
+	a m^2 + 2b mn + c n^2
+	=
+	a \left( m + \frac{b}{a} n \right)^2 +\frac{\det S}{a} n^2
+	\]
+	なので$ a m^2 + 2b mn + c n^2 < 0 $という条件は$ \abs{ a m + b n } < (-\det S) \abs{n} $と同値である. 
+	よってある$ \gamma = \pmat{ m & * \\ n & * } \in \SL_2(\Z) $が存在して
+	\[
+	n>0, \quad
+	\frac{-b + \det S}{a} < \frac{m}{n} < \frac{-b - \det S}{a}
+	\]
+	を満たすことを示せば良い. 
+	ここで有理数の稠密性からこの条件を満たす互いに素な$ m \in \Z, n \in \Z_{>0} $が取れる. 
+	この$ m, n $に対し$ \gamma = \pmat{ m & * \\ n & * } $を満たす$ \gamma \in \SL_2(\Z) $が存在するので主張が従う. 
+\end{proof}
+
+\begin{rem} \label{rem:Zwegers_lim}
+	\cref{lembasis_indef}より, ある$ \lambda, \lambda' \in \Z $と$ \Z^2 $の基底$ \widetilde{\lambda}, \widetilde{\lambda'} $と正の整数$ M, N $が存在して
+	$ {}^t\!(\lambda, \lambda') S (\widetilde{\lambda}, \widetilde{\lambda'}) = \pmat{M & \\ & -N} $を満たし
+	$ Q(\lambda), Q(\lambda'), {}^t\!\lambda S \lambda' < 0 $なるものが存在する. 
+	このとき$ \gamma \in \left[ 0, 1\right) \lambda \oplus \left[ 0, 1\right) \lambda' $に対しZwegersの不定値テータ関数は
+	\begin{align} 
+		\vartheta_{S, \lambda, \lambda'} \left( \gamma \tau; \tau \right)
+		&=
+		\sum_{m, n \in \Z} \left( \sgn_0(m) + \sgn_0(n) \right) q^{Q(\gamma + m\widetilde{\lambda} + n\widetilde{\lambda'})/2}
+		\\
+		&=
+		\left(
+		2 \sum_{l \in \widetilde{\lambda} + \widetilde{\lambda'} + (\Z_{\ge 0} \widetilde{\lambda} \oplus \Z_{\ge 0} \widetilde{\lambda'})}
+		-
+		2 \sum_{l \in - \widetilde{\lambda} - \widetilde{\lambda'} + (\Z_{\ge 0} (-\widetilde{\lambda}) \oplus \Z_{\ge 0} (-\widetilde{\lambda'}))}
+		\right.
+		\\
+		&+
+		\left.
+		\sum_{l \in \widetilde{\lambda} + \Z_{\ge 0} \widetilde{\lambda}}
+		+
+		\sum_{l \in \widetilde{\lambda'} + \Z_{\ge 0} \widetilde{\lambda'}}
+		-
+		\sum_{l \in -\widetilde{\lambda} + \Z_{\ge 0} (-\widetilde{\lambda})}
+		-
+		\sum_{l \in -\widetilde{\lambda'} + \Z_{\ge 0} (-\widetilde{\lambda'})}
+		\right)
+		q^{Q(\gamma + l)/2}
+	\end{align}
+	と書ける. 
+	この表示式と\cref{prop:infin_series_asymptotic}で準備した漸近展開の公式および重み付きGauss和の消滅性（\cref{prop:Gauss_sum_vanish}）から, Zwegersの不定値テータ関数を周期写像$ \veps $で重み付けて足し合わせたものは極限値が$ 0 $になることが分かる. 
+%	\[
+%	\lim_{t \to +0} \vartheta_{\gamma, \lambda, \lambda'} \left( \frac{1}{k} + t \iu \right)
+%	= 0
+%	\]
+%	が従う. 
+\end{rem}
+
+\cref{rem:Zwegers_lim}よりWRT不変量をZwegersの不定値テータ関数の冪根への極限値として表すことは望めないことが分かった. 
+そこで新しく\textbf{不定値\ruby{偽}{フォルス}テータ関数}を導入しよう. 
+
+% --------------------------------------------------------------------------
+
+\subsection{不定値\ruby{偽}{フォルス}テータ関数} \label{subsec:indef_false_theta}
+
+% --------------------------------------------------------------------------
+
+
+\begin{dfn} \label{dfn:indef_false_theta}
+	\leavevmode %強制的な改行
+	\begin{itemize}
+		\item 不定値対称行列$ S \in \Sym_2(\Z) $,
+		\item 不定値二次形式$ Q(n) := {}^t\!n S n, \, n \in \Z^2 $,
+		\item ベクトル$ \lambda, \lambda' \in \R^2 $であって$ Q(\lambda), Q(\lambda'), {}^t\!\lambda S \lambda' < 0 $なるもの,
+		\item ベクトル$ \gamma, \delta \in \R^2 $,
+		\item ベクトル$ z = \gamma \tau + \delta \in \bbC^2 $
+	\end{itemize}
+	に対し
+	\begin{align}
+		\widetilde{\vartheta}_{S, \lambda, \lambda'} \left( z; \tau \right)
+		&:=
+		\sum_{l \in \Z^2}
+		\sgn_0 \left( {}^t\!\lambda S (\gamma + l) \right)
+		\left(\sgn_0 \left( {}^t\!\lambda S (\gamma + l) \right) - \sgn_0( {}^t\!\lambda' S (\gamma + l) ) \right)
+		\bm{e} \left( {}^t\!z S l \right) q^{Q(l)/2}
+		\\
+		&=
+		\bm{e} \left( -{}^t\!\gamma S \delta \right) q^{-Q(\gamma)/2}		
+		\sum_{l \in \gamma + \Z^2}
+		\sgn_0( {}^t\!\lambda S l )
+		\left( \sgn_0( {}^t\!\lambda S l ) - \sgn_0( {}^t\!\lambda' S l ) \right)
+		\bm{e} \left( {}^t\!\delta S l \right) q^{Q(l)/2}
+	\end{align}
+	とおき, これを\textbf{不定値\ruby{偽}{フォルス}テータ関数}と呼ぶ. 
+\end{dfn}
+
+\begin{rem} \label{rem:indef_false_lim}
+	\cref{lembasis_indef}によって存在が保証される
+	\begin{itemize}
+		\item $ \lambda, \lambda' \in \Z $,
+		\item $ \Z^2 $の基底$ \widetilde{\lambda}, \widetilde{\lambda'} $,
+		\item 正の整数$ M, N $
+	\end{itemize}
+	であって
+	\[
+	{}^t\!(\lambda, \lambda') S (\widetilde{\lambda}, \widetilde{\lambda'}) = \pmat{M & \\ & -N}, \quad
+	Q(\lambda), Q(\lambda'), {}^t\!\lambda S \lambda' < 0
+	\]
+	を満たすものを取る. 
+	このとき$ \gamma \in \left[ 0, 1\right) \lambda \oplus \left[ 0, 1\right) \lambda' $と$ \delta \in \Z^2 $に対し不定値\ruby{偽}{フォルス}テータ関数は
+	\begin{align}
+		&\widetilde{\vartheta}_{S, \lambda, \lambda'} \left( \gamma \tau + \delta; \tau \right)
+		\\
+		= \,
+		&q^{-Q(\gamma)/2}
+		\sum_{m, n \in \Z} \sgn_0(m) \left( \sgn_0(m) + \sgn_0(n) \right) 
+		\bm{e} \left( {}^t\!\delta S (\gamma + m\widetilde{\lambda} + n\widetilde{\lambda'}) \right)
+		q^{Q(\gamma + m\widetilde{\lambda} + n\widetilde{\lambda'})/2}
+		\\
+		= \,
+		&q^{-Q(\gamma)/2}
+		\left(
+		2 \sum_{l \in \gamma + (\Z_{> 0} \widetilde{\lambda} \oplus \Z_{> 0} \widetilde{\lambda'}) \cup (\Z_{< 0} \widetilde{\lambda} \oplus \Z_{< 0} \widetilde{\lambda'})}
+		+
+		\sum_{l \in \gamma + (\Z \widetilde{\lambda} \smallsetminus \{ \widetilde{\lambda} \} )}
+		\right)
+		\bm{e} \left( {}^t\!\delta S l \right)
+		q^{Q(l)/2}
+	\end{align}
+	と書ける. 
+\end{rem}
+
+% --------------------------------------------------------------------------
+
+\section{WRT不変量を冪根極限に持つ無限級数} \label{sec:infinite_series}
+
+% --------------------------------------------------------------------------
+
+それではWRT不変量を冪根での極限値に持つような無限級数を不定値\ruby{偽}{フォルス}テータ関数から定義しよう. 
+本節では\cref{sec:fund_data}で準備した$ S, Q(m, n) $などのHグラフ$ \Gamma $から定まる記号を用いる. 
+対称行列$ S $は\textbf{不定値}であると仮定する. 
+また, \cref{lembasis_indef}によって存在が保証される以下の記号を固定する. 
+
+\begin{symb}
+	\begin{itemize}
+		\item $ \lambda, \lambda' \in \Z $,
+		\item $ \Z^2 $の基底$ \widetilde{\lambda}, \widetilde{\lambda'} $,
+		\item 正の整数$ M', N' $
+	\end{itemize}
+	を
+	\[
+	{}^t\!(\lambda, \lambda') S (\widetilde{\lambda}, \widetilde{\lambda'}) = \pmat{M' & \\ & -N'}, \quad
+	Q(\lambda), Q(\lambda'), {}^t\!\lambda S \lambda' < 0
+	\]
+	を満たすものとする.
+\end{symb}
+
+ここで固定した$ \Z^2 $の基底$ \widetilde{\lambda}, \widetilde{\lambda'} $に対し以下の床関数を定義する. 
+
+\begin{dfn}
+	\begin{enumerate}
+		\item 実数$ x $に対し, $ x $を超えない最大の整数を$ \floor{x} $と書く. 
+		\item ベクトル$ v \in \R^2 $に対し, $ v = x \widetilde{\lambda} + y \widetilde{\lambda'} $なる実数$ x, y $を取り
+		$ \floor{v} := \floor{x} \widetilde{\lambda} + \floor{y} \widetilde{\lambda'} \in \Z^2 $と書く. 
+	\end{enumerate}
+\end{dfn}
+
+以上の記号の下で次のようにホモロジカルブロックの類似物を定義する. 
+
+\begin{dfn} \label{dfn:HB}
+	実数$ x $と絶対値が$ 1 $未満の複素数$ q $に対し
+	\begin{align}
+		\widehat{Z}_{\Gamma} (x; q)
+		:= \,
+		&\frac{
+		\zeta_{4k}^{3\sigma_W - \sum_{i=1}^{6}w_{i} - \sum_{i=3}^{6} 1/w_{i}}
+		\bm{e}(\sigma'_W/8)
+		}
+		{4 \perm{(\widetilde{\lambda}, \widetilde{\lambda'})}}
+		\\
+		&\sum_{\gamma \in \calS} 
+		\veps(\gamma)
+		\bm{e} \left( x Q(\floor{\gamma}) \right) q^{Q(\gamma - \floor{\gamma})}
+		\widetilde{\vartheta}_{2S, \lambda, \lambda'} \left( (\gamma - \floor{\gamma})\tau + x \floor{\gamma}; \tau \right)
+	\end{align}
+	とおく. 
+	ただし\cref{prop:WRT_rep_Bernoulli}で定義したように
+	\[
+	\sigma'_W
+	:=
+	\sigma_W  - \sigma_S + \sgn(w_3) + \sgn(w_4) +\sgn(w_5) + \sgn(w_6)
+	\]
+	である.
+\end{dfn}
+
+このとき次が成り立つ. 
+
+\begin{thm} \label{thm:WRT_HB}
+	\[
+	\lim_{q \to \zeta_k} \widehat{Z}_{\Gamma} \left( \frac{1}{k}; q \right)
+	=
+	\frac{1}{2 \left(\zeta_{2k} - \zeta_{2k}^{-1} \right)} \WRT_k(M(\Gamma)).
+	\]
+\end{thm}
+
+\begin{proof}
+	\[
+	\widetilde{\vartheta}_{\Gamma} \left( x; \tau \right)
+	:= 
+	\sum_{\gamma \in \calS} 
+	\veps(\gamma)
+	\bm{e} \left( x Q(\floor{\gamma}) \right) q^{Q(\gamma - \floor{\gamma})}
+	\widetilde{\vartheta}_{2S, \lambda, \lambda'} \left( (\gamma - \floor{\gamma})\tau + x \floor{\gamma}; \tau \right)
+	\]
+	とおき, 
+	\begin{equation} \label{eq:lim_theta_Gamma}
+		\lim_{t \to +0} \widetilde{\vartheta}_{\Gamma} \left( \frac{1}{k}; \frac{1}{k} + \frac{t \iu}{2 \pi} \right)
+		=
+		\frac{4\perm{(\lambda, \lambda')}}{k^2}
+		\sum_{\gamma \in \calS} 
+		\veps(\gamma)
+		\sum_{l = {}^t\!(m, n) \in [k]^2}
+		\bm{e}\left( \frac{1}{k} Q(\gamma + l) \right) mn
+	\end{equation}
+	が成り立つことを証明すれば\cref{prop:WRT_rep_Bernoulli}から主張が従う. 
+	\cref{rem:indef_false_lim}の表示式より
+	\begin{align}
+		\widetilde{\vartheta}_{\Gamma} \left( x; \tau \right)
+		= \, 
+		&\sum_{\gamma \in \calS} 
+		\veps(\gamma)
+		\left(
+		2 \sum_{l \in \gamma - \floor{\gamma} + (\Z_{> 0} \widetilde{\lambda} \oplus \Z_{> 0} \widetilde{\lambda'}) \cup (\Z_{< 0} \widetilde{\lambda} \oplus \Z_{< 0} \widetilde{\lambda'})}
+		+
+		\sum_{l \in \gamma - \floor{\gamma} + (\Z \widetilde{\lambda} \smallsetminus \{ \widetilde{\lambda} \} )}
+		\right)
+		\\
+		&\bm{e} \left( x \left( Q(\floor{\gamma}) + 2 {}^t\!\floor{\gamma} S l \right) \right) 
+		q^{Q\left(  l \right) }
+	\end{align}
+	と書けるので
+	\begin{align}
+		&\widetilde{\vartheta}_{\Gamma} \left( \frac{1}{k}; \frac{1}{k} + \frac{t \iu}{2 \pi} \right)
+		\\
+		= \, 
+		&\sum_{\gamma \in \calS} 
+		\veps(\gamma)
+		\left(
+		2 \sum_{l \in \gamma - \floor{\gamma} + (\Z_{> 0} \widetilde{\lambda} \oplus \Z_{> 0} \widetilde{\lambda'}) \cup (\Z_{< 0} \widetilde{\lambda} \oplus \Z_{< 0} \widetilde{\lambda'})}
+		+
+		\sum_{l \in \gamma - \floor{\gamma} + (\Z \widetilde{\lambda} \smallsetminus \{ \widetilde{\lambda} \} )}
+		\right)
+		\bm{e} \left( \frac{1}{k} Q(l + \floor{\gamma}) \right) 
+		e^{-t Q \left( l \right) }
+		\\
+		= \, 
+		&\sum_{\gamma \in \calS} 
+		\veps(\gamma)
+		\left(
+		2 \sum_{l \in \gamma + (\Z_{> 0} \widetilde{\lambda} \oplus \Z_{> 0} \widetilde{\lambda'}) \cup (\Z_{< 0} \widetilde{\lambda} \oplus \Z_{< 0} \widetilde{\lambda'})}
+		+
+		\sum_{l \in \gamma + (\Z \widetilde{\lambda} \smallsetminus \{ \widetilde{\lambda} \} )}
+		\right)
+		\bm{e} \left( \frac{1}{k} Q(l) \right) 
+		e^{-t Q \left( l - \floor{\gamma} \right) }
+	\end{align}
+	を得る. 
+	\cref{prop:infin_series_asymptotic}で準備した漸近展開の公式および重み付きGauss和の消滅性（\cref{prop:Gauss_sum_vanish}）から	\cref{eq:lim_theta_Gamma}が従う. 
+\end{proof}
+
+% --------------------------------------------------------------------------
+
+\section{具体例} \label{sec:examples}
+
+% --------------------------------------------------------------------------
+
+
+% --------------------------------------------------------------------------
+
+\subsection{Hグラフの具体例} \label{subsec:H-graph_ex}
+
+% --------------------------------------------------------------------------
+
+本項ではHグラフ$ \Gamma $の具体例を紹介する. 
+
+まず初めに対称行列$ W $と$ S $の定値性について述べておく. 
+
+\begin{rem}
+	対称行列$ W $が正定値なら$ S $は負定値で, $ W $が負定値なら$ S $は正定値である. 
+	これらの事実の逆は成り立たず, また$ W $が不定値だからといって$ S $も不定値とは限らず, $ S $が不定値だからといって$ W $も不定値とは限らない. 
+	
+	これら事実の証左として, 本稿で考えている$ \det W = \pm 1 $となるようなHグラフの重さの具体例を$ W $や$ S $の符号に応じて並べた表を\cref{tab:H-graph_ex}に示した. 
+	なお, 重さ$ w_1, \dots, w_6 $のHグラフが$ \det W = \pm 1 $を満たすなら重さ$ -w_1, \dots, -w_6 $のHグラフも$ \det W = \pm 1 $を満たすので, \cref{tab:H-graph_ex}ではこの対称性を適用することで得られる重さの例は省略している. 
+	
+	また\cref{tab:H-graph_ex}から分かるように, $ w_1, \dots, w_6 $の符号のみから$ W $や$ S $の符号を決定することはできない. 
+	一方で$ W $や$ S $の符号を固定すると$ w_3, \dots, w_6 $の符号は一意的に決定されるように思われるが, このことは証明も反証も出来ていない. 
+\end{rem}
+
+
+\begin{table}[htb]
+	\caption{$ W $や$ S $の符号に応じたHグラフの重さの例}
+	\label{tab:H-graph_ex}
+	\centering
+	\begin{tabular}{ccc}
+		\hline\noalign{\smallskip}
+		$ W $の符号 & $ S $の定値性 & $ (w_1, \dots, w_6) $ \\
+		\hline
+		\rowcolor[gray]{0.95}
+		$ (0, 6) $ & 正 & $ (-1, -3, -3, -4, -3, -4), (-1, -4, -2, -5, -2, -7) $ \\
+		$ (1, 5) $ & 正 & $ (-1, -2, -3, 5, -2, -3), (-1, -3, -2, -7, -2, 3) $ \\
+		\rowcolor[gray]{0.95}
+		$ (1, 5) $ & 不 & $ (1, 0, -2, -5, -3, -4), (-1, -4, -2, -5, -2, -5) $ \\
+		$ (2, 4) $ & 正 & $ (0, -1, -4, -5, -1, -4), (0, 0, -1, -2, -2, -5), $ \\
+		\rowcolor[gray]{0.95}
+		$ (2, 4) $ & 不 & $ (-1, -2, -2, 5, -3, -4), (-2, -1, -2, 7, -4, -5) $ \\
+		$ (2, 4) $ & 負 & $ (-1, -1, 2, -3, -3, 5), (-1, -1, 2, 3, -4, -5) $ \\
+		\rowcolor[gray]{0.95}
+		$ (3, 3) $ & 正 & $ (0, -1, 2, 3, 3, -8), (0,-1, 1, -3, 3, 5) $ \\
+		$ (3, 3) $ & 不 & $ (1, 1, -2, 3, -3, 2), (1, 1, -2, -7, 4, 7) $ \\
+		\hline\noalign{\smallskip}
+	\end{tabular}		
+\end{table}
+
+% --------------------------------------------------------------------------
+
+\subsection{Poincar\'{e}ホモロジー球面の例} \label{subsec:Poincare}
+
+% --------------------------------------------------------------------------
+
+Poincar\'{e}ホモロジー球面は\cref{fig:Poincare}の手術図式で定義されるSeifertホモロジー球面である. 
+
+\begin{figure}[htb]
+	\centering
+	\begin{tikzpicture}
+		\node[shape=circle,fill=black, scale = 0.4] (1) at (0,0) { };
+		\node[shape=circle,fill=black, scale = 0.4] (2) at (1.4,0) { };
+		\node[shape=circle,fill=black, scale = 0.4] (3) at (-1,-1) { };
+		\node[shape=circle,fill=black, scale = 0.4] (4) at (-1,1) { };
+		
+		\node[draw=none] (B1) at (0,0.4) {$ 1 $};
+		\node[draw=none] (B2) at (1.4, 0.4) {$ 5 $};
+		\node[draw=none] (B3) at (-0.6,1) {$ 2 $};
+		\node[draw=none] (B4) at (-0.6,-1) {$ 3 $};
+		
+		\path [-](1) edge node[left] {} (2);
+		\path [-](1) edge node[left] {} (3);
+		\path [-](1) edge node[left] {} (4);
+	\end{tikzpicture}
+	\caption{Poincar\'{e}ホモロジー球面の手術図式} \label{fig:Poincare}
+\end{figure}
+
+Poincar\'{e}ホモロジー球面のWRT不変量はLawrence-Zagier~\cite{LZ}によって\ruby{偽}{フォルス}テータ関数の冪根への極限値による表示が発見されている（\cite[Theorem 1]{LZ}）. 
+彼らは更にRamanujanによって発見された位数$ 3 $の\ruby{擬}{モック}テータ関数
+\[
+f(q) := \sum_{n=0}^{\infty} \frac{q^{n^2}}{(1+q) (1+q^3) \cdots (1+q^{2n-1})}
+\]
+による表示式も示している（\cite[Section 5]{LZ}）. 
+また樋上は\cite[Proposition 1 and 2]{Hikami_mock_false}でRamanujanの位数$ 5 $のモックテータ関数
+\[
+\chi_0 (q) := \sum_{n=0}^\infty \frac{q^n}{(1-q^{n+1}) (1-q^{n+2}) \cdots (1-q^{2n})}
+\]
+による表示式を与えている他, \cite[Theorem 3.5]{Hikami_Hecke}では不定値テータ関数
+\[
+M_1(q) = 
+\frac{1}{(q)_\infty}
+\left( \sum_{m, n \ge 0} - \sum_{m, n < 0} \right)
+(-1)^{m+n} q^{(3m^2 + 4mn + 3n^2 + 3m + 5n)/2}.
+\]
+による表示式を与えている. 
+
+本稿で示した\cref{thm:WRT_HB}は, これらとは異なる新しいタイプの極限公式を与える. 
+このことを見ていこう. 
+
+まず\cref{fig:Poincare}に示した手術図式をNeumann移動（\cref{fig:Neumann}）を用いて\cref{fig:Poincare_change}のように変形する. 
+
+\begin{figure}[htb]
+	\centering
+	\begin{tikzpicture}
+		%左のグラフ
+		\node[shape=circle,fill=black, scale = 0.4] (1) at (0,0) { };
+		\node[shape=circle,fill=black, scale = 0.4] (2) at (1.4,0) { };
+		\node[shape=circle,fill=black, scale = 0.4] (3) at (-1,-1) { };
+		\node[shape=circle,fill=black, scale = 0.4] (4) at (-1,1) { };
+		\node[shape=circle,fill=black, scale = 0.4] (5) at (2.4,1) { };
+		
+		\node[draw=none] (B1) at (0,0.4) {$ 1 $};
+		\node[draw=none] (B2) at (1.4, 0.4) {$ 4 $};
+		\node[draw=none] (B3) at (-0.6,1) {$ 2 $};
+		\node[draw=none] (B4) at (-0.6,-1) {$ 3 $};
+		\node[draw=none] (B5) at (2.8,1) {$ -1 $};
+		
+		\path [-](1) edge node[left] {} (2);
+		\path [-](1) edge node[left] {} (3);
+		\path [-](1) edge node[left] {} (4);
+		\path [-](2) edge node[left] {} (5);
+		
+		%右のグラフ
+		\node[shape=circle,fill=black, scale = 0.4] (1) at (6,0) { };
+		\node[shape=circle,fill=black, scale = 0.4] (2) at (7.4,0) { };
+		\node[shape=circle,fill=black, scale = 0.4] (3) at (5,-1) { };
+		\node[shape=circle,fill=black, scale = 0.4] (4) at (5,1) { };
+		\node[shape=circle,fill=black, scale = 0.4] (5) at (8.4,1) { };
+		\node[shape=circle,fill=black, scale = 0.4] (6) at (8.4,-1) { };
+		
+		\node[draw=none] (B1) at (6,0.4) {$ 1 $};
+		\node[draw=none] (B2) at (7.4, 0.4) {$ 3 $};
+		\node[draw=none] (B3) at (5.4,1) {$ 2 $};
+		\node[draw=none] (B4) at (5.4,-1) {$ 3 $};
+		\node[draw=none] (B5) at (8.8,1) {$ -1 $};
+		\node[draw=none] (B6) at (8.8,-1) {$ -1 $};
+		
+		\path [-](1) edge node[left] {} (2);
+		\path [-](1) edge node[left] {} (3);
+		\path [-](1) edge node[left] {} (4);
+		\path [-](2) edge node[left] {} (5);
+		\path [-](2) edge node[left] {} (6);
+	\end{tikzpicture}
+	\caption{Poincar\'{e}ホモロジー球面の手術図式の変形} \label{fig:Poincare_change}
+\end{figure}
+
+\cref{fig:Poincare_change}の右側に示したHグラフを$ \Gamma $とおく. 
+この$ \Gamma $に対し, \cref{sec:fund_data}で準備したデータは
+\begin{align}
+	&M = 6, \quad
+	N = 1, \quad
+	a = -5, \quad
+	c = -1, 
+	\\
+	&S = \pmat{30 & -6 \\ -6 & 1}, \quad
+	Q(m, n) = 30m^2 - 12mn + n^2,
+	\\
+	&\det W = -1, \quad
+	\det S = -6, \quad
+	\sigma_W = 0, \quad
+	\sigma_S = 0, \quad
+	\sigma'_W = 0, \quad
+	\\
+	&\sum_{i=1}^{6}w_{i} - \sum_{i=3}^{6} 1/w_{i}
+	= \frac{35}{6},
+	\\
+	&\calT = \left\{ \frac{1}{2} \pm \frac{1}{4} \pm \frac{1}{6} \right\} 
+	= \left\{ \frac{r}{12} \relmiddle{|} 0 \le r < 12, \, \gcd(r, 12) = 1 \right\},
+	\\
+	&\calU = \left\{ \frac{1}{2} \pm \frac{1}{2} \pm \frac{1}{2} \right\} 
+	= \left\{ \pm \frac{1}{2}, \frac{3}{2}  \right\},
+	\\
+	&\chi \left( \frac{r}{12} \right)
+	= \chi_{12} (r)
+	:=
+	\left( \frac{12}{r} \right) =
+	\begin{cases}
+		(-1)^h & r = 6h \pm 1, \\
+		0 & \text{ otherwise}
+	\end{cases},
+	\\
+	&\psi \left( -\frac{1}{2} \right)
+	= \psi \left( \frac{3}{2} \right)
+	= 1, \quad
+	\psi \left( \frac{1}{2} \right)
+	= -2
+\end{align}
+と計算される. 
+このときWRT不変量は\cref{prop:WRT_rep_Bernoulli}より
+\begin{align}
+	\WRT_k(M(\Gamma)) 
+	= \,
+	\frac{\zeta_{24k}^{35}}{2k^2 (\zeta_{2k}-\zeta_{2k}^{-1})}
+	\sum_{\gamma = {}^t\!(\alpha, \beta) \in \calS} 
+	\veps(\gamma)
+	\sum_{l = {}^t\!(m, n) \in [k]^2}
+	\bm{e}\left( \frac{1}{k} Q(\gamma + l) \right) mn
+\end{align}
+と計算される. 
+
+ここで
+\[
+\lambda := \pmat{-1 \\ -6}, \quad
+\lambda' := \pmat{-6 \\ -30}, \quad
+\widetilde{\lambda} := \pmat{1 \\ 0}, \quad
+\widetilde{\lambda'} := \pmat{0 \\ -1}
+\]
+とおくと$ \widetilde{\lambda}, \widetilde{\lambda'} $は$ \Z^2 $の基底で, 
+\[
+{}^t\!(\lambda, \lambda') S (\widetilde{\lambda}, \widetilde{\lambda'}) = \pmat{6 & \\ & -6}, \quad
+Q(\lambda), Q(\lambda'), {}^t\!\lambda S \lambda' < 0
+\]
+が満たされる. 
+このとき\cref{dfn:HB}で定義した$ \widehat{Z}_{\Gamma} (x; q) $は
+\begin{align}
+	&\widehat{Z}_{\Gamma} (x; q)
+	\\
+	= \,
+	&-\frac{\zeta_{24k}^{35}}{4} 
+	\sum_{\gamma \in \calS} 
+	\veps(\gamma)
+	\bm{e} \left( x Q(\floor{\gamma}) \right) q^{Q(\gamma - \floor{\gamma})}
+	\widetilde{\vartheta}_{2S, \lambda, \lambda'} \left( (\gamma - \floor{\gamma})\tau + x \floor{\gamma}; \tau \right)
+	\\
+	= \,
+	&-\frac{\zeta_{24k}^{35}}{4} 
+	\sum_{0 \le r < 12} \chi_{12} (r) 
+	\left( \sum_{s \in \{ \pm 1 \}} - 2 \sum_{s = 0} \right)
+	\bm{e} \left( x Q \left( 0, s \right) \right) 
+	q^{Q(r/12, 1/2)}
+	\\
+	&\qquad \qquad \qquad
+	\widetilde{\vartheta}_{2S, \lambda, \lambda'} \left( \tau \pmat{r/12 \\ 1/2} + x \pmat{0 \\ s}; \tau \right)
+	\\
+	= \,
+	&-\frac{\zeta_{24k}^{35}}{4} 
+	\sum_{0 \le r < 12} \chi_{12} (r) 
+	\left( \sum_{s \in \{ \pm 1 \}} - 2 \sum_{s = 0} \right)
+	\bm{e} \left( x s^2 \right) 
+	q^{5r^2/24 - r/2 + 1/4}
+	\\
+	&\qquad \qquad \qquad
+	\widetilde{\vartheta}_{2S, \lambda, \lambda'} \left( \tau \pmat{r/12 \\ 1/2} + x \pmat{0 \\ s}; \tau \right)
+\end{align}
+と書ける. 
+ここで\cref{rem:indef_false_lim}の表示式より
+\begin{align}
+	&\widehat{Z}_{\Gamma} (x; q)
+	\\
+	= \,
+	&-\frac{\zeta_{24k}^{35}}{4} 
+	\sum_{0 \le r < 12} \chi_{12} (r) 
+	\left( \sum_{s \in \{ \pm 1 \}} - 2 \sum_{s = 0} \right)
+	\bm{e} \left( x s^2 \right) 
+	\sum_{m, n \in \Z} \sgn_0(m) \left( \sgn_0(m) + \sgn_0(n) \right) 
+	\\
+	&\qquad \qquad \qquad
+	\bm{e} \left( x(0, s) S \left( \pmat{r/12 \\ 1/2} + m\widetilde{\lambda} + n\widetilde{\lambda'} \right) \right)
+	q^{Q({}^t\!(r/12, 1/2) + m\widetilde{\lambda} + n\widetilde{\lambda'})}
+	\\
+	= \,
+	&-\frac{\zeta_{24k}^{35}}{4} 
+	\sum_{0 \le r < 12} \chi_{12} (r) q^{5r^2 - r/2 + 1/4}
+	\left( \sum_{s \in \{ \pm 1 \}} - 2 \sum_{s = 0} \right)
+	\bm{e} \left( x \left( s^2 - \frac{rs}{2} + \frac{s}{2} \right) \right)
+	\\
+	&\qquad 
+	\sum_{m, n \in \Z} \sgn_0(m) \left( \sgn_0(m) + \sgn_0(n) \right) 
+	\bm{e} \left( -xs \left( 6m + n \right) \right)
+	q^{30m^2 + 12mn + n^2 + (5r - 6)m + (r-1)n}
+\end{align}
+を得る. 
+さらにこの式は
+\begin{align}
+	\widehat{Z}_{\Gamma} (x; q)
+	= \,
+	&-\frac{\zeta_{24k}^{35}}{4} 
+	\sum_{0 \le r < 12} \chi_{12} (r) q^{5r^2 - r/2 + 1/4}
+	\sum_{m, n \in \Z} \sgn_0(m) \left( \sgn_0(m) + \sgn_0(n) \right) 
+	\\
+	&\qquad 
+	\left(
+	\bm{e} \left( -x \left( \frac{1}{2} + \frac{r}{2} + 6m + n \right) \right)
+	+
+	\bm{e} \left( -x \left( \frac{3}{2} - \frac{r}{2} - 6m - n \right) \right)
+	- 2
+	\right)
+	\\
+	&\qquad 
+	q^{30m^2 + 12mn + n^2 + (5r - 6)m + (r-1)n}
+\end{align}
+と計算できる. 
+これがPoincar\'{e}ホモロジー球面のWRT不変量を極限値に持つ新たな無限級数である. 
+
+% --------------------------------------------------------------------------
+
+\section{今後の課題} \label{sec:future}
+
+% --------------------------------------------------------------------------
+
+今後の課題としてまず挙げられるのが, 本稿で新しく定義した不定値\ruby{偽}{フォルス}テータ関数のモジュラー性についてである. 
+これが解明されれば行列$ S $が不定値となるHグラフに対してもWRT不変量の量子モジュラー性が分かる. 
+
+またPoincar\'{e}ホモロジー球面の場合に, 本稿で新しく定義した無限級数$ \widehat{Z}_{\Gamma} (x; q) $と\cref{subsec:Poincare}の冒頭で紹介したWRT不変量を極限値に持つことが知られている種々の級数の間に$ q $級数としての関係があるかについても興味が持たれる. 
+
+また$ \widehat{Z}_{\Gamma} (x; q) $が\cite{GPPV}で定義されたホモロジカルブロックのように$ W $から定まる不定値テータ関数の積分として表示できるのかということや, その幾何的な意味付けを与えることも今後の課題である. 
+
+
+% --------------------------------------------------------------------------
+%		参考文献
+% --------------------------------------------------------------------------
+
+\bibliographystyle{alpha}
+\bibliography{H-graph_indefinite}
+% 日本語の書籍タイトルがゴシック体になる. 見苦しいようなら\emphコマンドを書き換える. 
+
+% --------------------------------------------------------------------------
+\end{document}
+% --------------------------------------------------------------------------
