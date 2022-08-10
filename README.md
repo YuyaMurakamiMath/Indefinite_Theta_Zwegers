@@ -1,4 +1,4 @@
-ここは, 私村上が執筆した[Zwegersの不定値テータ関数](https://github.com/YuyaMurakamiMath/guide_alg_num/blob/main/%E4%BB%A3%E6%95%B0%E7%9A%84%E6%95%B4%E6%95%B0%E8%AB%96%E3%81%AE%E9%81%93%E6%A1%88%E5%86%85.pdf)というpdfの保管庫です.
+ここは, 私村上が執筆した[Zwegersの不定値テータ関数](https://github.com/YuyaMurakamiMath/Indefinite_Theta_Zwegers/blob/main/Zwegers%E3%81%AE%E4%B8%8D%E5%AE%9A%E5%80%A4%E3%83%86%E3%83%BC%E3%82%BF%E9%96%A2%E6%95%B0/Zwegers%E3%81%AE%E4%B8%8D%E5%AE%9A%E5%80%A4%E3%83%86%E3%83%BC%E3%82%BF%E9%96%A2%E6%95%B0.pdf)というpdfの保管庫です.
 
 この文書では, Ramanujanのモックテータ関数をモジュラー形式論の枠組みで理解するためにZwegersによって導入された不定値テータ関数について, そのアイデアを解説しています. 
 
