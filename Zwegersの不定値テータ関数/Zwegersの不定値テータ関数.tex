@@ -948,9 +948,8 @@ c_1 := \pmat{1 \\ -1}
 	なおこのとき$ B(c_i, a) = 0 \in \Z $なのでこの状況は\cref{dfn:Zwegers_theta_general}の条件を満たしていない。
 \end{ex}
 
-
-
-
+\cref{dfn:Zwegers_theta_general}では極力新しい記号を導入せずに定義を述べたが、Zwegers~\cite{Zwegers_thesis}はもう少し記号を準備している。
+例えばベクトル$ c_1, c_2 $に関する条件は二次形式$ Q $に関する錐を用いて記述しているが、これについては\cref{subsec:cone}で紹介する。
 
 % --------------------------------------------------------------------------
 
@@ -958,17 +957,19 @@ c_1 := \pmat{1 \\ -1}
 
 % --------------------------------------------------------------------------
 
+それではZwegersの不定値テータ関数の性質を見ていこう。
+
 \begin{thm}[{Zwegers~\cite[Proposition 2.4]{Zwegers_thesis}, \cite[Theorem 8.26]{BFOR}}]
-	Zwegersの不定値テータ関数を定める無限級数は広義一様収束する. 
+	\cref{dfn:Zwegers_theta_general}の状況で$ \vartheta_{a, b}^{c_1, c_2} \left( \tau \right) $を定める無限級数は広義一様収束する. 
 \end{thm}
 
-Zwegersの不定値テータ関数が持つ最も重要な性質である\ruby{擬}{モック}モジュラー性について紹介する. 
+Zwegersの不定値テータ関数が持つ最も重要な性質はモジュラー変換則を満たすことである。
 それはZwegersの学位論文以後、現在では次のように定式化されている. 
 
 \begin{thm}[{\cite[Theorem 8.30]{BFOR}}]
-	\cref{dfn:Zwegers_theta}の設定下で$ \lambda, \lambda' \in \Z^2 $であり, それらの各成分は互いに素だと仮定する. 
-	このとき$ \vartheta_{S, \lambda, \lambda'} \left( z; \tau \right) $は重さ$ 1 $のベクトル値混合\ruby{擬}{モック}モジュラー形式 (vector-valued mixed mock modular form) の成分となる. 
-	特に$ \vartheta_{S, \lambda, \lambda'} \left( z; \tau \right) $はある合同部分群$ \Gamma \subset \SL_2(\Z) $に関する重さ$ 1 $の混合\ruby{擬}{モック}モジュラー形式である. 
+	\cref{dfn:Zwegers_theta}の設定下で$ c_1, c_2 \in \Z^r $であり, それらの各成分は互いに素だと仮定する. 
+	このとき$ \vartheta_{S, \lambda, \lambda'} \left( z; \tau \right) $は重さ$ r/2 $のベクトル値混合調和Maass形式 (vector-valued mixed harmonic Maass form) の成分となる. 
+%	特に$ \vartheta_{S, \lambda, \lambda'} \left( z; \tau \right) $はある合同部分群$ \Gamma \subset \SL_2(\Z) $に関する重さ$ 1 $の混合\ruby{擬}{モック}モジュラー形式である. 
 \end{thm}
 
 ここで混合\ruby{擬}{モック}モジュラー形式は以下のように定義される概念である. 
@@ -976,10 +977,11 @@ Zwegersの不定値テータ関数が持つ最も重要な性質である\ruby{�
 \begin{dfn}[{\cite[Definition 13.1]{BFOR}}]
 	\textbf{重さ$ k $の混合調和Maass形式}%, もしくは\textbf{深さ$ 2 $, 重さ$ k $の調和Maass形式}
 	とは有限和$ f_1(\tau) g_1(\tau) + \cdots + f_n(\tau) g_n(\tau) $で表される関数であって, 各$ f_i(\tau) $は重さ$ k_i $の弱正則モジュラー形式であり各$ g_i(\tau) $は重さ$ l_i $の制御可能増大度の調和Maass形式 (harmonic Maass form of manageable growth, \cite[Definition 4.1]{BFOR}) であり各$ 1 \le i \le n $に対し$ k_i + l_i = k $を満たすもののことである. 
-	重さ$ k $の混合調和Maass形式の正則部分を\textbf{混合\ruby{擬}{モック}モジュラー形式}と呼ぶ. 
+%	重さ$ k $の混合調和Maass形式の正則部分を\textbf{混合\ruby{擬}{モック}モジュラー形式}と呼ぶ. 
 \end{dfn}
 
-
+ここで「制御可能増大度の調和Maass形式 」という未定義語が登場しているが、これ以上は詳説しないことにする。
+定式化がどうされるにしろ、Zwegersの不定値テータ関数の定義における一番のポイントは誤差関数の導入により通常のテータ関数と同様にPoissonの和公式からモジュラー変換則が従うことである。
 
 
 % --------------------------------------------------------------------------
