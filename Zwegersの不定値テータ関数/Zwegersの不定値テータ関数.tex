@@ -497,9 +497,10 @@ f \left( -\frac{1}{\tau} \right) = f(\tau) + g(\tau)
 まずは一番簡単な不定値二次形式として$ m^2 - n^2 $に対して、その不定値テータ関数をどのように定義すれば良いか考えていこう。
 安直に思い付く
 \[
-\sum_{(m, n) \in \Z^2} q^{m^2 - n^2}
+\sum_{(m, n) \in \Z^2} q^{(m^2 - n^2)/2}
 \]
-はうまくいかない。
+はうまくいかない%
+\footnote{ここで$ q $の肩に乗せた二次形式を$ 1/2 $倍している理由は、通常のテータ関数でも$ 1/2 $倍したものを定義に採用するとモジュラー変換則が綺麗に書けることに倣ったためである。定義の本質的な部分ではないので気にしなくて良い。}。
 なぜなら$ m^2 - n^2 = 0 $となる$ (m, n) \in \Z^2 $は無数に存在するので定数項が収束しないし、また今$ \abs{q} < 1 $なのに$ m^2 - n^2 $はいくらでも小さな負の数を取りうるためである。
 ではどのようにして「不定値二次形式$ m^2 - n^2 $のテータ関数」を定義すれば良いのだろうか。
 
@@ -520,21 +521,23 @@ Andrewsの結果を整理した表示式である\cref{cor:mock_indefinite}に�
 
 この例は係数が少し複雑なので、先ほどの$ m^2 - n^2 $という二次形式の場合に説明し直してみる。
 $ m^2 - n^2 $が正となるのは$ \abs{m} > \abs{n} $のとき、すなわち$ n+m > 0 > n-m $または$ n+m < 0 < n-m $のときなので、不定値テータ関数の定義として
-\[
-\left( \sum_{\substack{n, j \in \Z, \\ n+m > 0 > n-m}} - \sum_{\substack{n, j \in \Z, \\ n+m < 0 < n-m}} \right) q^{m^2 - n^2}
-=
-\sum_{(m, n) \in \Z^2} \left( \sgn(n+m) - \sgn(n-m) \right) q^{m^2 - n^2}
-\]
+\begin{align}
+	&\left( \sum_{\substack{n, j \in \Z, \\ n+m > 0 > n-m}} - \sum_{\substack{n, j \in \Z, \\ n+m < 0 < n-m}} \right) q^{(m^2 - n^2)/2}
+	\\
+	= \,
+	&\sum_{(m, n) \in \Z^2} \left( \sgn(n+m) - \sgn(n-m) \right) q^{(m^2 - n^2)/2}
+	\label{eq:indef_ex}
+\end{align}
 を採用すれば良さそうである。
 このように定義した無限級数は実際に収束するので、これを「不定値テータ関数」と呼んでしまって問題ないと了承できる。
 
 以上から不定値テータ関数は符号を用いて定義できることが分かった。
 
-\begin{rem}
+\begin{rem} \label{rem:indef_ambiguity}
 	上では$ m^2 - n^2 $が正となるための必要十分条件を考えているが、実際には十分条件さえ与えてしまえば同様に「不定値テータ関数」を定義できる。
 	例えば$ \abs{m} > 2\abs{n} $のときも$ m^2 - n^2 $は正となるので
 	\[
-	\sum_{(m, n) \in \Z^2} \left( \sgn(2n+m) - \sgn(2n-m) \right) q^{m^2 - n^2}
+	\sum_{(m, n) \in \Z^2} \left( \sgn(2n+m) - \sgn(2n-m) \right) q^{(m^2 - n^2)/2}
 	\]
 	も収束する。
 	これも「不定値テータ関数」と呼んでしまって差し支えないだろう。
@@ -566,7 +569,7 @@ $ m^2 - n^2 $が正となるのは$ \abs{m} > \abs{n} $のとき、すなわち$
 
 そこで、そもそも通常のテータ関数のモジュラー変換則（\cref{prop:theta_modular_trans}）がどのように証明されたかに立ち返ってみよう。
 証明のポイントはGauss関数$ e^{-\pi x^2} $がFourier変換で不変という性質を持っていることである。
-この性質を利用することで固定した$ t > 0 $に対し$ f_t (x) := e^{-\pi t x^2} $のFourier変換が$ \sqrt{t} e^{-\pi  x^2/t} $になることが分かり、Poissonの和公式を用いることで$ \theta (\tau) := \sum_{n \in \Z} q^{n^2} $のモジュラー変換則$ \theta (t\iu) = \sqrt{t} \theta (-1/t\iu) $が従うのである。
+この性質を利用することで固定した$ t > 0 $に対し$ f_t (x) := e^{-\pi t x^2} $のFourier変換が$ \sqrt{t} e^{-\pi  x^2/t} $になることが分かり、Poissonの和公式を用いることで$ \theta (\tau) := \sum_{n \in \Z} q^{n^2/2} $のモジュラー変換則$ \theta (t\iu) = \sqrt{t} \theta (-1/t\iu) $が従うのである。
 
 そこで不定値テータ関数に対してもFourier変換で不変な関数をうまく見つけられれば同様にモジュラー変換則が成り立つ関数（すなわちモジュラー補完）を見つけられることになる。
 前項での観察から$ r $変数不定値二次形式のテータ関数は一般に
@@ -690,7 +693,7 @@ $ \widehat{f} g (x) = g^2 (x) = g(\sqrt{2} x) = \widehat{f} (\sqrt{2} x) $
 これは「近い式」と言ってしまって良いだろう。
 だが$ \widehat{f} = g $すなわち$ f = g $が探していたシンデレラかというと、そうではない。
 $ g $はシグモイド曲線でないためである。
-そもそも上では何も考えずに$ f $のFourier変換$ \widehat{f} $を考えていたが、今$ f $はシグモイド曲線で急減少関数ではないためFourier変換は定義できないのである。
+そもそも上では何も考えずに$ f $のFourier変換$ \widehat{f} $を考えていたが、今$ f $はシグモイド曲線で急減少関数ではない（$ 2 $乗可積分関数でもない）ためFourier変換は定義できないのである。
 
 だが諦めてはいけない。
 関数方程式の解を見つける有効な方法として、その方程式がどのような対称性を持つか考察するという方法がある。
@@ -700,7 +703,7 @@ $ g $はシグモイド曲線でないためである。
 さて、この関数方程式はどのような対称性を持つだろうか？
 ここも気合と直感が要求される部分だが、頑張って探すと$ f $が解ならその微分$ f' $も解であることに気付けるかもしれない（これは畳み込み積の性質
 $ (f \ast h)' = f \ast h' $から分かる）。
-すると同様の議論から任意の正整数$ n \in \Z_{>0} $に対して$ f^{(n)} $も解になることが分かる（$ n < 0 $のときの$ f^{(n)} $の定義は\cref{lem:Fourier} \cref{item:lem:Fourier_diff}参照）。
+すると同様の議論から任意の正整数$ n \in \Z_{>0} $に対して$ f^{(n)} $も解になることが分かる。
 これは群作用にはなっていない。$ \Z_{>0} $が加法について逆元を持たないためである。
 だが$ n < 0 $のときにも\cref{lem:Fourier} \cref{item:lem:Fourier_diff}のように$ f^{(n)} $を定義することで、$ n < 0 $でも$ f^{(n)} $が解になり、考えている関数方程式に群$ \Z $が作用することが分かるのである。
 
@@ -770,64 +773,197 @@ Hecke~\cite[Satz 7]{Hecke}はこのテータ関数が重さ$ 1 $のモジュラ�
 
 % --------------------------------------------------------------------------
 
-
+これまでの議論をまとめると、
+\begin{itemize}
+	\item \ruby{擬}{モック}テータ関数のモジュラー変換則を調べるには、不定値テータ関数のモジュラー変換則を調べれば良い
+	\item 不定値テータ関数のモジュラー変換則を調べるには、不定値テータ関数のモジュラー補完を与えれば良い
+	\item 不定値テータ関数のモジュラー補完を与えるには、誤差関数$ \erf(x) $を用いれば良い
+\end{itemize}
+ということが分かっている。
+そこで本節ではいよいよZwegersによる不定値テータ関数の定義を与えよう。
 
 % --------------------------------------------------------------------------
 
-\subsection{Zwegersの不定値テータ関数の定義と\ruby{擬}{モック}モジュラー性} \label{subsec:Zwegers_theta_def}
+\subsection{Zwegersの不定値テータ関数の定義} \label{subsec:Zwegers_theta_def}
 
 % --------------------------------------------------------------------------
 
-
-まずZwegersの不定値テータ関数の定義を述べる. 
-なお本稿では二変数二次形式のみ扱うこととする. 
-本節を通して以下の記号を固定する. 
+それではZwegersの不定値テータ関数の定義を述べていこう. 
+以下の記号を固定する. 
 
 \begin{symb}
-	不定値対称行列$ S \in \Sym_2(\Z) $.
+	\begin{itemize}
+		\item 正整数$ r \in \Z_{>0} $.
+		\item 整数係数$ r $次対称行列$ A \in \Sym_r(\Z) $であって、非退化で符号数$ (r-1, 1) $のもの（すなわち正の固有値が$ r-1 $個、負の固有値が$ 1 $個のもの）.
+	\end{itemize}
 \end{symb}
 
 これに対し次の記法を定めておく. 
 
+\begin{nota}
+	\begin{itemize}
+		\item 不定値二次形式$ Q \colon \bbC^r \to \bbC, \, x \mapsto {}^t\!x A x /2 $.
+		\item 不定値双線形形式$ B \colon \bbC^r \times \bbC^r \to \bbC, \, (x, y) \mapsto {}^t\!x A y $.
+	\end{itemize}
+\end{nota}
+
+以上のデータを基にZwegersの不定値テータ関数が定義されるが、いきなり最も一般的な状況を述べるのではなく、まずは特殊で分かりやすい場合から紹介することにする. 
+
 \begin{dfn}
-	不定値二次形式$ Q(l) := {}^t\!l S l /2, \, l \in \Z^2 $.
-\end{dfn}
-
-このときZwegersの不定値テータ関数は以下のように定義される. 
-
-\begin{dfn}[{\cite[Equation 8.23]{BFOR}, Zwegers~\cite[Section 2.2]{Zwegers_thesis}}]
-	\label{dfn:Zwegers_theta}
+	\label{dfn:Zwegers_theta_special}
 	\leavevmode %強制的な改行
 	\begin{itemize}
-		\item 不定値対称行列$ S \in \Sym_2(\Z) $,
-		\item 不定値二次形式$ Q(n) := {}^t\!n S n, \, n \in \Z^2 $,
-		\item ベクトル$ \lambda, \lambda' \in \R^2 $であって$ Q(\lambda), Q(\lambda'), {}^t\!\lambda S \lambda' < 0 $なるもの,
-		\item ベクトル$ \gamma, \delta \in \R^2 $,
-		\item ベクトル$ z = \gamma \tau + \delta \in \bbC^2 $
+		\item ベクトル$ c_1, c_2 \in \R^r $であって$ Q(c_1), Q(c_2), B(c_1, c_2) < 0 $なるもの,
+		\item ベクトル$ a, b \in \R^r $,
+		\item ベクトル$ z := a \tau + b \in \bbC^2 $
 	\end{itemize}
 	に対し
 	\begin{align}
-		\vartheta_{S, \lambda, \lambda'} \left( z; \tau \right)
-		&:=
-		\sum_{l \in \Z^2}
-		\left(\sgn_0 \left( {}^t\!\lambda S (\gamma + l) \right) - \sgn_0( {}^t\!\lambda' S (\gamma + l) ) \right)
-		\bm{e} \left( {}^t\!z S l \right) q^{Q(l)/2}
+		\vartheta_{a, b}^{c_1, c_2} \left( \tau \right)
+		:= \,
+		&\sum_{\nu \in a + \Z^r}
+		\left( \erf \left( \sqrt{\pi y} \frac{B(c_1, \nu)}{\sqrt{-Q(c_1)}} \right) - \erf \left( \sqrt{\pi y} \frac{B(c_2, \nu)}{\sqrt{-Q(c_2)}} \right) \right)
+		e^{2\pi \iu B(\nu, b)} q^{Q(l)},
 		\\
-		&=
-		\bm{e} \left( -{}^t\!\gamma S \delta \right) q^{-Q(\gamma)/2}		
-		\sum_{l \in \gamma + \Z^2}
-		\left(\sgn_0( {}^t\!\lambda S l ) - \sgn_0( {}^t\!\lambda' S l ) \right)
-		\bm{e} \left( {}^t\!\delta S l \right) q^{Q(l)/2}
+		\vartheta_{A}^{c_1, c_2} \left( z; \tau \right)
+		:= \,
+		&e^{-2\pi \iu B(a, b)} q^{-Q(a)} \vartheta_{a, b}^{c_1, c_2} \left( \tau \right)
+		\\
+		= \,
+		&\sum_{n \in \Z^r}
+		\left( \erf \left( \sqrt{\pi y} \frac{B(c_1, n + a)}{\sqrt{-Q(c_1)}} \right) - \erf \left( \sqrt{\pi y} \frac{B(c_2, n + a)}{\sqrt{-Q(c_2)}} \right) \right)
+		e^{2\pi \iu B(n, z)} q^{Q(n)}
 	\end{align}
-	とおき, これを\textbf{Zwegersの不定値テータ関数}と呼ぶ. 
+	と定義する. 
 \end{dfn}
 
-\begin{thm}[{\cite[Theorem 8.26]{BFOR}, Zwegers~\cite[Proposition 2.4]{Zwegers_thesis}}]
-	Zwegersの不定値テータ関数を定める無限級数は収束する. 
+\begin{ex}
+	\[
+	 r = 2, \quad
+	 A = \pmat{1 & 0 \\ 0 & -1}, \quad
+	 a = b = \pmat{0 \\ 0}, \quad
+	 c_1= \pmat{1 \\ -2}, \quad
+	 c_2= \pmat{-1 \\ -2}
+	\]
+	のとき
+	\[
+	\vartheta_{a, b}^{c_1, c_2} \left( \tau \right)
+	=
+	\sum_{(m, n) \in \Z^2}
+	\left( \erf \left( \sqrt{\pi y} \frac{2n+m}{\sqrt{3}} \right) - \erf \left( \sqrt{\pi y} \frac{2n-m}{\sqrt{3}} \right) \right)
+	q^{(m^2 - n^2)/2}
+	\]
+	である。
+	これは\cref{rem:indef_ambiguity}で述べた不定値テータ関数
+	\[
+	\sum_{(m, n) \in \Z^2} \left( \sgn(2n+m) - \sgn(2n-m) \right) q^{(m^2 - n^2)/2}.
+	\]
+	のモジュラー補完である。
+\end{ex}
+
+さて、\cref{eq:indef_ex}では
+\[
+\sum_{(m, n) \in \Z^2} \left( \sgn(n+m) - \sgn(n-m) \right) q^{(m^2 - n^2)/2}
+\]
+という不定値テータ関数を紹介した。
+ここで符号の中に現れている一次形式は
+\[
+n+m = B \left( \pmat{m \\ n}, c_1 \right), \quad
+c_1 := \pmat{1 \\ -1}
+\]
+と書けているが、ここで$ Q(c_1) = 0 $なので\cref{dfn:Zwegers_theta_special}の状況から外れてしまっている。
+
+実はこのような場合にも不定値テータ関数のモジュラー補完が定義できるが、それは誤差関数$ \erf(x) $を用いずに符号をそのまま用いたものになっている。
+つまり、モジュラー補完を考えずとも初めから元の不定値テータ関数が完全なモジュラー変換則を満たすのである。
+これはとても奇妙なことに思われるが、\cref{dfn:Zwegers_theta_special}における状況の極限としてこのような場合が現れることによるものである。
+
+それでは$ Q(c_i) = 0 $の場合にも定義を拡張しよう。
+
+\begin{dfn}[{Zwegers~\cite[Section 2.2]{Zwegers_thesis}, \cite[Equation 8.23]{BFOR}}]
+	\label{dfn:Zwegers_theta_general}
+	\leavevmode %強制的な改行
+	\begin{itemize}
+		\item ベクトル$ c_1, c_2 \in \R^r $であって$ Q(c_1) \le 0, \, Q(c_2) \le 0, \, B(c_1, c_2) < 0 $を満たし、$ i = 1, 2 $に対し$ Q(c_i) = 0 $のときは$ c_i \in \Q^r $を満たすもの,
+		\item ベクトル$ a \in \R^r $であって$ i = 1, 2 $に対し$ Q(c_i) = 0 $のときは$ B(c_i, a) \notin \Z $を満たすもの,
+		\item ベクトル$ b \in \R^r $,
+		\item ベクトル$ z := a \tau + b \in \bbC^2 $
+	\end{itemize}
+	に対し
+	\begin{align}
+		\vartheta_{a, b}^{c_1, c_2} \left( \tau \right)
+		:= \,
+		&\sum_{\nu \in a + \Z^r}
+		\left( \rho^{c_1} (\nu, \tau) - \rho^{c_2} (\nu, \tau) \right)
+		e^{2\pi \iu B(\nu, b)} q^{Q(l)},
+		\\
+		\vartheta_{A}^{c_1, c_2} \left( z; \tau \right)
+		:= \,
+		&e^{-2\pi \iu B(a, b)} q^{-Q(a)} \vartheta_{a, b}^{c_1, c_2} \left( \tau \right)
+		\\
+		= \,
+		&\sum_{n \in \Z^r}
+		\left( \rho^{c_1} (n+a, \tau) - \rho^{c_2} (n+a, \tau) \right)
+		e^{2\pi \iu B(n, z)} q^{Q(n)}
+	\end{align}
+	と定義する. 
+	ただし
+	\begin{align}
+		\rho^c(\nu, \tau) 
+		&:=
+		\begin{dcases}
+			\erf \left( \sqrt{\pi y} \frac{B(c, n + a)}{\sqrt{-Q(c)}} \right) & Q(c) < 0, \\
+			\sgn_0(B(c, \nu)) & Q(c) = 0,
+		\end{dcases}	
+		\\
+		\sgn_0(x) &:= 
+		\begin{cases}
+			1 & x > 0, \\
+			0 & x = 0, \\
+			-1 & x < 0.
+		\end{cases}
+	\end{align}
+\end{dfn}
+
+\begin{rem}
+	\cref{cor:mock_indefinite}では符号関数を$ \sgn(0) := 1 $と定義していたが、上では$ \sgn_0(0) := 0 $という定義を採用している。
+	前者の方は$ q $級数の文脈だと扱いやすい定義で、後者の方は誤差関数の極限と見ることによってモジュラー変換則が扱いやすい定義になっている。
+	なおZwegersの学位論文\cite{Zwegers_thesis}や\cite{BFOR}では$ \sgn(0) := 0 $という定義を採用していることに注意する。
+\end{rem}
+
+\begin{ex}
+	\[
+	r = 2, \quad
+	A = \pmat{1 & 0 \\ 0 & -1}, \quad
+	a = b = \pmat{0 \\ 0}, \quad
+	c_1= \pmat{1 \\ -1}, \quad
+	c_2= \pmat{-1 \\ -1}
+	\]
+	のとき
+	\[
+	\vartheta_{a, b}^{c_1, c_2} \left( \tau \right)
+	=
+	\sum_{(m, n) \in \Z^2} \left( \sgn_0(n+m) - \sgn_0(n-m) \right) q^{(m^2 - n^2)/2}
+	\]
+	である。
+	なおこのとき$ B(c_i, a) = 0 \in \Z $なのでこの状況は\cref{dfn:Zwegers_theta_general}の条件を満たしていない。
+\end{ex}
+
+
+
+
+
+% --------------------------------------------------------------------------
+
+\subsection{Zwegersの不定値テータ関数の性質} \label{subsec:Zwegers_theta_property}
+
+% --------------------------------------------------------------------------
+
+\begin{thm}[{Zwegers~\cite[Proposition 2.4]{Zwegers_thesis}, \cite[Theorem 8.26]{BFOR}}]
+	Zwegersの不定値テータ関数を定める無限級数は広義一様収束する. 
 \end{thm}
 
-Zwegersの不定値テータ関数が持つ最も重要な性質である\ruby{擬}{モック}モジュラー性について見ていくことにする. 
-それは次のように定式化される. 
+Zwegersの不定値テータ関数が持つ最も重要な性質である\ruby{擬}{モック}モジュラー性について紹介する. 
+それはZwegersの学位論文以後、現在では次のように定式化されている. 
 
 \begin{thm}[{\cite[Theorem 8.30]{BFOR}}]
 	\cref{dfn:Zwegers_theta}の設定下で$ \lambda, \lambda' \in \Z^2 $であり, それらの各成分は互いに素だと仮定する. 
@@ -848,7 +984,7 @@ Zwegersの不定値テータ関数が持つ最も重要な性質である\ruby{�
 
 % --------------------------------------------------------------------------
 
-\subsection{} \label{subsec:}
+\subsection{不定値二次形式から定まる錐の構造} \label{subsec:cone}
 
 % --------------------------------------------------------------------------
 
@@ -856,14 +992,13 @@ Zwegersの不定値テータ関数が持つ最も重要な性質である\ruby{�
 
 
 
+\begin{symb}
+	ベクトル$ c_0 \in \R^r $であって$ Q(c_0) < 0 $なるもの.
+\end{symb}
 
 
 
-% --------------------------------------------------------------------------
 
-\subsection{} \label{subsec:}
-
-% --------------------------------------------------------------------------
 
 
 
@@ -895,6 +1030,12 @@ Zwegersの不定値テータ関数が持つ最も重要な性質である\ruby{�
 
 
 
+% --------------------------------------------------------------------------
+
+\subsection{} \label{subsec:}
+
+% --------------------------------------------------------------------------
+
 
 
 % --------------------------------------------------------------------------
@@ -902,6 +1043,10 @@ Zwegersの不定値テータ関数が持つ最も重要な性質である\ruby{�
 \section*{謝辞}
 
 % --------------------------------------------------------------------------
+
+本稿は2022 年度八王子数論セミナー「モックテータ関数」での私の発表のために準備したものです。
+セミナーの運営に尽力して下さったセミナーオーガナイザーの松坂俊輝さん（九州大学）と、世話人の安福悠先生（日本大学）に深く感謝いたします。
+
 
 
 % --------------------------------------------------------------------------
