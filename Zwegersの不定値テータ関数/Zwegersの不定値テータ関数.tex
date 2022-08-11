@@ -967,7 +967,7 @@ Zwegersの不定値テータ関数が持つ最も重要な性質はモジュラ�
 それはZwegersの学位論文以後、現在では次のように定式化されている. 
 
 \begin{thm}[{\cite[Theorem 8.30]{BFOR}}]
-	\cref{dfn:Zwegers_theta}の設定下で$ c_1, c_2 \in \Z^r $であり, それらの各成分は互いに素だと仮定する. 
+	\cref{dfn:Zwegers_theta_general}の設定下で$ c_1, c_2 \in \Z^r $であり, それらの各成分は互いに素だと仮定する. 
 	このとき$ \vartheta_{S, \lambda, \lambda'} \left( z; \tau \right) $は重さ$ r/2 $のベクトル値混合調和Maass形式 (vector-valued mixed harmonic Maass form) の成分となる. 
 %	特に$ \vartheta_{S, \lambda, \lambda'} \left( z; \tau \right) $はある合同部分群$ \Gamma \subset \SL_2(\Z) $に関する重さ$ 1 $の混合\ruby{擬}{モック}モジュラー形式である. 
 \end{thm}
@@ -980,7 +980,7 @@ Zwegersの不定値テータ関数が持つ最も重要な性質はモジュラ�
 %	重さ$ k $の混合調和Maass形式の正則部分を\textbf{混合\ruby{擬}{モック}モジュラー形式}と呼ぶ. 
 \end{dfn}
 
-ここで「制御可能増大度の調和Maass形式 」という未定義語が登場しているが、これ以上は詳説しないことにする。
+ここで「制御可能増大度の調和Maass形式 」という未定義語が登場しているが、これ以上は解説しないことにする。
 定式化がどうされるにしろ、Zwegersの不定値テータ関数の定義における一番のポイントは誤差関数の導入により通常のテータ関数と同様にPoissonの和公式からモジュラー変換則が従うことである。
 
 
@@ -990,28 +990,78 @@ Zwegersの不定値テータ関数が持つ最も重要な性質はモジュラ�
 
 % --------------------------------------------------------------------------
 
+本項では\cref{subsec:Zwegers_theta_def}で言及を避けた二次形式$ Q $に関する錐について紹介する。
 
+ポイントは次の補題である。
 
+\begin{lem} \label{lem:cone}
+	$ r $次元Euclid空間$ \R^r $の部分集合$ \{ c \in \R^r \mid Q(c) < 0 \} $の連結成分は$ 2 $つあり、それらを$ C_+, C_- $とおくと
+	$ c_+, c_+' \in C_+, \, c_-, c_-' \in C_- $に対し
+	\[
+	B(c_+, c_+') < 0, \quad
+	B(c_+, c_-) > 0, \quad
+	B(c_-, c_-') < 0
+	\]
+	が成り立つ。
+\end{lem}
 
+\begin{proof}
+	基底変換することで
+	\[
+	A = \pmat{ 1 & & & & \\ & \ddots & & \\ & & 1 & \\ & & & -1}
+	\]
+	として良い。このとき
+	\begin{align}
+		\{ c \in \R^r \mid Q(c) < 0 \}
+		&= \{ (c_1, \dots, c_r) \in \R^r \mid c_1^2 + \cdots + c_{r-1}^2 < c_r^2 \}
+		\\
+		&= C_+ \sqcup C_-
+	\end{align}
+	と書ける。
+	ただし
+	\[
+	C_\pm :=  \{ (c_1, \dots, c_r) \in \R^r \mid c_1^2 + \cdots + c_{r-1}^2 < c_r^2, \, \pm c_r > 0 \}
+	\]
+	とおく。
+	ここで$ Q(c), Q(c') < 0 $なる$ c = (c_1, \dots, c_r), c' = (c'_1, \dots, c'_r) \in \R^r $に対しCauchy-Schwartzの不等式より
+	\[
+	(c_1 c'_1 + \cdots + c_{r-1} c'_{r-1})^2
+	\le
+	(c_1^2 + \cdots + c_{r-1}^2) ({c'_1}^2 + \cdots + {c'_{r-1}}^2)
+	<
+	c_r^2 {c'_r}^2
+	\]
+	なので
+	\[
+	B(c, c') = c_1 c'_1 + \cdots + c_{r-1} c'_{r-1} - c_r c'_r \neq 0
+	\]
+	である。
+	よって連続写像$ B \colon \R^r \times \R^r \to \R $の像について
+	\[
+	B(C_+ \times C_+), \,
+	B(C_+ \times C_-), \,
+	B(C_- \times C_-) \subset \R^\times
+	\]
+	が成り立つ。
+	今$ C_+, C_- $は連結なのでこれら$ 3 $つの集合も連結であり、従って$ \R_{>0} $または$ \R_{<0} $の部分集合となる。
+	$ c_\pm := (0, \dots, 0, \pm 1) \in \R^r $に対し$ B(c_\pm, c_\pm) $を計算することにより
+	\[
+	B(C_+ \times C_+) \subset \R_{<0}, \quad
+	B(C_+ \times C_-) \subset \R_{>0}, \quad
+	B(C_- \times C_-) \subset \R_{<0}
+	\]
+	が従う。
+\end{proof}
 
-\begin{symb}
-	ベクトル$ c_0 \in \R^r $であって$ Q(c_0) < 0 $なるもの.
-\end{symb}
+この補題から、\cref{dfn:Zwegers_theta_special}における$ c_1, c_2 $は$ \{ c \in \R^r \mid Q(c) < 0 \} $の同じ連結成分に属していることが分かる。
+そこで連結成分を$ 1 $つ固定して始めから$ c_1, c_2 $をその元として取っても同じことになるが、実際Zwegers~\cite{Zwegers_thesis}や\cite{BFOR}ではそのような記述の仕方をしている。
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+また連結成分を$ 1 $つ固定することはベクトル$ c_0 \in \R^r $であって$ Q(c_0) < 0 $なるものを固定することと同値である.
+実際そのような$ c_0 $に対し
+\[
+\{ c \in \R^r \mid Q(c) < 0, \, B(c, c_0) < 0 \}
+\]
+は$ \{ c \in \R^r \mid Q(c) < 0 \} $の連結成分を定めていることが\cref{lem:cone}から分かる。
 
 % --------------------------------------------------------------------------
 
