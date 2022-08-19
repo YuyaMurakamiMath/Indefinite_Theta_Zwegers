@@ -1100,10 +1100,12 @@ Vign\'{e}rasは不定値テータ関数を扱う一般的な枠組みを与え�
 		\item 正整数$ r \in \Z_{>0} $,
 		\item 格子$ L \subset \R^r $,
 		\item 符号数$ (r-s, s) $の非退化二次形式$ Q \colon L \to \Z $,
-		\item $ C^\infty $関数$ p \colon \R^r \to \bbC $であって任意の$ 0 \le i \le 2 $に対し
+		\item $ C^\infty $関数$ p \colon \R^r \to \bbC $であって任意の$ 0 \le m \le 2 $と$ 1 \le i \le j \le r $に対し
 		\[
-		\frac{d^i}{dx^i} p(x) e^{-2\pi Q(x)}, \quad
-		x^i p(x) e^{-2\pi Q(x)}
+		p(x) e^{-2\pi Q(x)}, %\quad
+		\frac{\partial}{\partial x_i} p(x) e^{-2\pi Q(x)}, %\quad
+		\frac{\partial^2}{\partial x_i \partial x_j} p(x) e^{-2\pi Q(x)}, %\quad
+		x^m p(x) e^{-2\pi Q(x)}
 		\in L^2(\R^n) \cap L^1(\R^n)
 		\]
 		なるもの
@@ -1152,7 +1154,7 @@ Vign\'{e}rasは不定値テータ関数を扱う一般的な枠組みを与え�
 		\\
 		\Theta_{A, \mu} \left( \frac{z}{\tau}; -\frac{1}{\tau} \right)
 		&=
-		\frac{(-\iu \tau)^{\lambda + r/2}}{\sqrt{\abs{L'/L}}}
+		\frac{(-\iu)^{r/2 - s} \tau^{\lambda + r/2}}{\sqrt{\abs{L'/L}}}
 		e^{\pi\iu Q(A^{-1} A^*)}
 		\sum_{\nu \in L'/L} e^{-2\pi\iu B(\mu, \nu) + 2\pi\iu Q(z) / \tau } 
 		\Theta_{A, \nu} (z; \tau)
@@ -1239,7 +1241,7 @@ p(x) :=
 また松坂さんには2020年に14回以上にわたる個人的なセミナーにて\ruby{擬}{モック}テータ関数やZwegersの不定値テータ関数, Vign\'{e}rasの結果や関連する研究について懇切丁寧に教えて頂きました. 
 特に本稿の\cref{sec:Vigneras}の内容は松坂さんから個人的なセミナーにて教わった内容に基づくものです. 
 当時そのように丁寧にお教え頂いてなかったら本稿を書くことは全く叶いませんでした. 
-松坂さんには誤植についてもご指摘頂きました。
+松坂さんには数学的な誤りや誤植についてもご指摘頂きました。
 大変感謝いたします. 
 小野雅隆さん（早稲田大学）には多くの誤植や言葉遣いをご指摘頂きました.
 都築正男先生（上智大学）には\cref{sec:Vigneras}の内容について数学的な誤りと誤植をご指摘頂きました.
