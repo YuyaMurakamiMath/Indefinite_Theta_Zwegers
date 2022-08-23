@@ -60,61 +60,43 @@
 %\usepackage{myprogram} % ハイライト付きソースコード. 「C:\w32tex\share\texmf-local\tex\(好きなファイル名)」に置いたmyprogram.styを読み込む
 
 % --------------------------------------------------------------------------
-%		節タイトルの枠囲み
+%		タイトルのデザイン
 % --------------------------------------------------------------------------
 
-%番号付きセクションの環境設定
-\titleformat{\section}[block]{}{%
-	\begin{tcolorbox}[%
-		enhanced,%
-		colback=white,%
-		colframe=black!25!white,%
-		boxrule=1pt,%
-		leftrule=25pt,%
-		%		height=30pt,% 
-		overlay={%
-			\draw node at ($(frame.west) + (12.5pt,0pt)$) {\hbox{\centering\Large\bfseries\gtfamily\thesection}};% 左端中央からleftruleの値の1/2だけずれた位置に数字を入力
-		}%
-		]%
-		\Large\bfseries\gtfamily#1%
-	\end{tcolorbox}
-}{0pt}{\vspace{-10pt}}[\vspace{0pt}]
-
-%番号無しセクションの環境設定
-\titleformat{name=\section,numberless}[block]{}{%
-	\begin{tcolorbox}[%
-		enhanced,%
-		colback=white,%
-		colframe=black!25!white,%
-		boxrule=1pt,%
-		leftrule=25pt,%
-%		height=30pt,% 
-		overlay={%
-			\draw node at ($(frame.west) + (12.5pt,0pt)$) {\hbox{\centering\Large\bfseries\gtfamily%\thesection
-			}};% 左端中央からleftruleの値の1/2だけずれた位置に数字を入力
-		}%
-		]%
-		\Large\bfseries\gtfamily#1%
-	\end{tcolorbox}
-}{0pt}{\vspace{-10pt}}[\vspace{0pt}]
-
-%番号付きサブセクションの環境設定
-\titleformat{\subsection}[block]{}{%
-	\begin{tcolorbox}
-		[
-		enhanced,%枠の描画に TikZ を利用するときなどのオプション
-		colback=black!10!white,% background
-		colframe=black!10!white,% frame colour
-		coltext=black, % text color
-		boxrule=1pt,%
-		leftrule=25pt,%
-		overlay={%
-			\draw node at ($(frame.west) + (15pt,0pt)$) {\hbox{\centering\large\bfseries\gtfamily\thesubsection}};% 左端中央からleftruleの値の1/2だけずれた位置に数字を入力
-		}%
-		]
-		\large\bfseries\gtfamily#1%	
-	\end{tcolorbox}
-}{0pt}{\vspace{-10pt}}[\vspace{0pt}]
+\makeatletter
+\def\thickhrulefill{\leavevmode \leaders \hrule height 1pt\hfill \kern \z@}
+\renewcommand{\maketitle}{\begin{titlepage}%
+		\let\footnotesize\small
+		\let\footnoterule\relax
+		\parindent \z@
+		\reset@font
+		\null\vfil
+		\begin{center}
+			\Huge \@title
+		\end{center}
+		\par
+		\hrule height 4pt
+		\par
+		\vskip 60\p@
+		\begin{flushright}
+			\LARGE \@author \par
+		\end{flushright}
+		\vskip 30\p@
+%		\vfil\null
+		\begin{flushright}
+			{\large \@date}%
+		\end{flushright}
+		\vskip 30\p@		
+%目次部分
+		\begin{contentsbox}
+			\makeatletter
+			\@starttoc{toc}
+			\makeatother
+		\end{contentsbox}
+	\end{titlepage}%
+	\setcounter{footnote}{0}%
+}
+\makeatother
 
 % --------------------------------------------------------------------------
 \begin{document}
@@ -124,41 +106,18 @@
 \author{村上友哉}
 \date{\today}
 
+%タイトル
 \maketitle
 
 %シンプルな目次
 %\tableofcontents
 
 % カラフルな目次
-\begin{tcolorbox}[
-	breakable,%%%ページマタギOK
-	enhanced jigsaw,%%%tikzを用いた記法の処理
-	title={目次},
-	fonttitle=\bfseries\Large,
-	colback=yellow!2!white,%%%本文の背景色
-	colframe=red!50!black,%%%本文の枠の色
-	before=\par\bigskip\noindent,
-	%	interior style={fill overzoom image=goldshade.png,fill image opacity=0.25},
-	colbacktitle=red!50!black,%%%タイトルの背景の色
-	enlargepage flexible=\baselineskip,pad at break*=3mm,
-	%	watermark color=yellow!75!red!25!white,
-	%	watermark text={\bfseries\Large Contents},
-	attach boxed title to top center={yshift=-0.25mm-\tcboxedtitleheight/2,yshifttext=2mm-\tcboxedtitleheight/2},
-	boxed title style={enhanced,boxrule=0.5mm,
-		frame code={ \path[tcb fill frame] ([xshift=-4mm]frame.west) -- (frame.north west)
-			-- (frame.north east) -- ([xshift=4mm]frame.east)
-			-- (frame.south east) -- (frame.south west) -- cycle; },
-		%		interior code={ \path[tcb fill interior] ([xshift=-2mm]interior.west)
-		%			-- (interior.north west) -- (interior.north east)
-		%			-- ([xshift=2mm]interior.east) -- (interior.south east) -- (interior.south west)
-		%			-- cycle;}
-	},
-	%	drop fuzzy shadow
-	]
-	\makeatletter
-	\@starttoc{toc}
-	\makeatother
-\end{tcolorbox}
+%\begin{contentsbox}
+%	\makeatletter
+%	\@starttoc{toc}
+%	\makeatother
+%\end{contentsbox}
 
 % --------------------------------------------------------------------------
 
